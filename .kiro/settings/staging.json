@@ -1,0 +1,23 @@
+{
+  "environment": "staging",
+  "database": {
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
+    "name": "eventchain_staging",
+    "ssl": true
+  },
+  "api": {
+    "baseUrl": "${API_BASE_URL}",
+    "timeout": 30000
+  },
+  "logging": {
+    "level": "info",
+    "enableConsole": true,
+    "enableFile": true
+  },
+  "features": {
+    "enableDebugMode": false,
+    "enableMockData": false,
+    "enableTestingTools": true
+  }
+}

@@ -1,0 +1,177 @@
+exports.seed = function(knex) {
+  // Deletes ALL existing entries
+  return knex('articles').del()
+    .then(function () {
+      // Inserts seed entries
+      return knex('articles').insert([
+        {
+          title: 'The Future of Event Technology: AI and Virtual Reality',
+          content: '# The Future of Event Technology\n\nDiscover how AI and VR are transforming events.',
+          excerpt: 'Discover how artificial intelligence and virtual reality are transforming the event industry.',
+          featured_image_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
+          author_name: 'Sarah Johnson',
+          author_id: 1,
+          category: 'technology',
+          status: 'published',
+          view_count: 1247,
+          read_time: 8,
+          tags: JSON.stringify(['AI', 'Virtual Reality', 'Event Technology']),
+          published_at: new Date('2024-01-15T10:00:00Z')
+        },
+        {
+          title: 'Sustainable Event Planning: A Guide to Eco-Friendly Gatherings',
+          content: '# Sustainable Event Planning\n\nLearn how to create environmentally responsible events.',
+          excerpt: 'Learn how to plan environmentally responsible events that minimize waste and reduce carbon emissions.',
+          featured_image_url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=400&fit=crop',
+          author_name: 'Michael Chen',
+          author_id: 1,
+          category: 'business',
+          status: 'published',
+          view_count: 892,
+          read_time: 10,
+          tags: JSON.stringify(['Sustainability', 'Event Planning', 'Environment']),
+          published_at: new Date('2024-01-10T14:30:00Z')
+        },
+        {
+          title: 'The Art of Networking: Building Meaningful Connections at Events',
+          content: '# The Art of Networking\n\nMaster the skills of authentic networking.',
+          excerpt: 'Master the skills of authentic networking to build lasting professional relationships.',
+          featured_image_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop',
+          author_name: 'Emily Rodriguez',
+          author_id: 1,
+          category: 'business',
+          status: 'published',
+          view_count: 1563,
+          read_time: 12,
+          tags: JSON.stringify(['Networking', 'Professional Development', 'Relationships']),
+          published_at: new Date('2024-01-08T09:15:00Z')
+        },
+        {
+          title: 'Event Marketing in the Digital Age: Strategies That Drive Engagement',
+          content: '# Event Marketing in the Digital Age\n\nDiscover modern strategies for promoting events.',
+          excerpt: 'Discover modern strategies for promoting events through digital channels and social media.',
+          featured_image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop',
+          author_name: 'David Thompson',
+          author_id: 1,
+          category: 'marketing',
+          status: 'published',
+          view_count: 2034,
+          read_time: 15,
+          tags: JSON.stringify(['Event Marketing', 'Digital Marketing', 'Social Media']),
+          published_at: new Date('2024-01-05T16:45:00Z')
+        },
+        {
+          title: 'The Psychology of Event Design: Creating Memorable Experiences',
+          content: '# The Psychology of Event Design\n\nExplore how understanding human psychology can help create better events.',
+          excerpt: 'Explore how understanding human psychology can help create event environments that foster connection.',
+          featured_image_url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=400&fit=crop',
+          author_name: 'Lisa Wang',
+          author_id: 1,
+          category: 'design',
+          status: 'published',
+          view_count: 1789,
+          read_time: 14,
+          tags: JSON.stringify(['Event Design', 'Psychology', 'Experience Design']),
+          published_at: new Date('2024-01-03T11:20:00Z')
+        },
+        {
+          title: 'The Rise of Micro-Events: How Small Gatherings Are Making Big Impact',
+          content: '# The Rise of Micro-Events\n\nDiscover how small-scale events are creating meaningful connections.',
+          excerpt: 'Discover how small-scale, intimate events are creating meaningful connections and delivering big impact.',
+          featured_image_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&h=400&fit=crop',
+          author_name: 'Alexandra Kim',
+          author_id: 1,
+          category: 'business',
+          status: 'published',
+          view_count: 945,
+          read_time: 9,
+          tags: JSON.stringify(['Micro-Events', 'Networking', 'Community Building']),
+          published_at: new Date('2024-01-12T13:45:00Z')
+        },
+        {
+          title: 'Virtual Reality Events: The Next Frontier in Digital Gatherings',
+          content: '# Virtual Reality Events\n\nExplore how VR technology is transforming digital events.',
+          excerpt: 'Explore how virtual reality technology is transforming digital events into immersive experiences.',
+          featured_image_url: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&h=400&fit=crop',
+          author_name: 'Marcus Chen',
+          author_id: 1,
+          category: 'technology',
+          status: 'published',
+          view_count: 1678,
+          read_time: 11,
+          tags: JSON.stringify(['Virtual Reality', 'Digital Events', 'VR Technology']),
+          published_at: new Date('2024-01-14T08:30:00Z')
+        },
+        {
+          title: 'Event Analytics: Using Data to Drive Better Decisions',
+          content: '# Event Analytics\n\nLearn how to leverage data analytics to make informed decisions.',
+          excerpt: 'Learn how to leverage data analytics to make informed decisions and optimize event performance.',
+          featured_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
+          author_name: 'Jennifer Park',
+          author_id: 1,
+          category: 'business',
+          status: 'published',
+          view_count: 1342,
+          read_time: 13,
+          tags: JSON.stringify(['Event Analytics', 'Data-Driven Decisions', 'ROI']),
+          published_at: new Date('2024-01-16T15:20:00Z')
+        },
+        {
+          title: 'The Future of Hybrid Events: Blending Physical and Digital Experiences',
+          content: '# The Future of Hybrid Events\n\nDiscover how hybrid events are combining physical and digital experiences.',
+          excerpt: 'Discover how hybrid events are combining the best of physical and digital experiences.',
+          featured_image_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=400&fit=crop',
+          author_name: 'Robert Martinez',
+          author_id: 1,
+          category: 'technology',
+          status: 'published',
+          view_count: 1892,
+          read_time: 12,
+          tags: JSON.stringify(['Hybrid Events', 'Digital Transformation', 'Event Technology']),
+          published_at: new Date('2024-01-18T10:15:00Z')
+        },
+        {
+          title: 'Event Security in the Digital Age: Protecting Attendees and Data',
+          content: '# Event Security in the Digital Age\n\nLearn how to implement comprehensive security strategies.',
+          excerpt: 'Learn how to implement comprehensive security strategies that protect both physical safety and digital assets.',
+          featured_image_url: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=400&fit=crop',
+          author_name: 'Daniel Wilson',
+          author_id: 1,
+          category: 'business',
+          status: 'published',
+          view_count: 1123,
+          read_time: 14,
+          tags: JSON.stringify(['Event Security', 'Cybersecurity', 'Data Protection']),
+          published_at: new Date('2024-01-20T12:45:00Z')
+        },
+        {
+          title: 'The Power of Storytelling in Event Marketing',
+          content: '# The Power of Storytelling\n\nLearn how compelling narratives can transform your event marketing.',
+          excerpt: 'Discover how compelling storytelling can create emotional connections and drive event attendance.',
+          featured_image_url: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=400&fit=crop',
+          author_name: 'Sophie Anderson',
+          author_id: 1,
+          category: 'marketing',
+          status: 'published',
+          view_count: 1456,
+          read_time: 7,
+          tags: JSON.stringify(['Storytelling', 'Event Marketing', 'Content Strategy']),
+          published_at: new Date('2024-01-22T09:30:00Z')
+        },
+        {
+          title: 'Innovative Event Venues: Thinking Outside the Traditional Box',
+          content: '# Innovative Event Venues\n\nExplore creative venue options that can make your events unforgettable.',
+          excerpt: 'Discover unique and creative venue options that can transform ordinary events into extraordinary experiences.',
+          featured_image_url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=400&fit=crop',
+          author_name: 'Carlos Mendez',
+          author_id: 1,
+          category: 'design',
+          status: 'published',
+          view_count: 987,
+          read_time: 6,
+          tags: JSON.stringify(['Event Venues', 'Creative Design', 'Innovation']),
+          published_at: new Date('2024-01-24T14:15:00Z')
+        }
+      ]);
+    });
+};

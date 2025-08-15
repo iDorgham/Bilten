@@ -1,0 +1,218 @@
+const express = require('express');
+const { body, param, query, validationResult } = require('express-validator');
+const PromoCodeController = require('../controllers/promoCodeController');
+const auth = require('../middleware/auth');
+const router = express.Router();
+
+// Validation error handler
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ 
+      success: false,
+      errors: errors.array() 
+    });
+  }
+  next();
+};
+
+// Validation middleware
+const validatePromoCode = [
+  body('code')
+    .isString()
+    .isLength({ min: 3, max: 20 })
+    .matches(/^[A-Z0-9]+$/)
+    .withMessage('Code must be 3-20 characters, uppercase letters and numbers only'),
+  body('name')
+    .isString()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name must be 1-100 characters'),
+  body('description')
+    .optional()
+    .isString()
+    .isLength({ max: 500 })
+    .withMessage('Description must be less than 500 characters'),
+  body('discountType')
+    .isIn(['percentage', 'fixed_amount'])
+    .withMessage('Discount type must be percentage or fixed_amount'),
+  body('discountValue')
+    .isFloat({ min: 0.01 })
+    .withMessage('Discount value must be a positive number'),
+  body('minimumOrderAmount')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Minimum order amount must be a non-negative number'),
+  body('maximumDiscountAmount')
+    .optional()
+    .isFloat({ min: 0.01 })
+    .withMessage('Maximum discount amount must be a positive number'),
+  body('maxUses')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Max uses must be a positive integer'),
+  body('maxUsesPerUser')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Max uses per user must be a positive integer'),
+  body('validFrom')
+    .optional()
+    .isISO8601()
+    .withMessage('Valid from must be a valid date'),
+  body('validUntil')
+    .optional()
+    .isISO8601()
+    .withMessage('Valid until must be a valid date'),
+  body('applicableEvents')
+    .optional()
+    .isArray()
+    .withMessage('Applicable events must be an array'),
+  body('applicableTicketTypes')
+    .optional()
+    .isArray()
+    .withMessage('Applicable ticket types must be an array'),
+  body('isActive')
+    .optional()
+    .isBoolean()
+    .withMessage('Is active must be a boolean')
+];
+
+const validateUpdatePromoCode = [
+  body('code')
+    .optional()
+    .isString()
+    .isLength({ min: 3, max: 20 })
+    .matches(/^[A-Z0-9]+$/)
+    .withMessage('Code must be 3-20 characters, uppercase letters and numbers only'),
+  body('name')
+    .optional()
+    .isString()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name must be 1-100 characters'),
+  body('description')
+    .optional()
+    .isString()
+    .isLength({ max: 500 })
+    .withMessage('Description must be less than 500 characters'),
+  body('discountType')
+    .optional()
+    .isIn(['percentage', 'fixed_amount'])
+    .withMessage('Discount type must be percentage or fixed_amount'),
+  body('discountValue')
+    .optional()
+    .isFloat({ min: 0.01 })
+    .withMessage('Discount value must be a positive number'),
+  body('minimumOrderAmount')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Minimum order amount must be a non-negative number'),
+  body('maximumDiscountAmount')
+    .optional()
+    .isFloat({ min: 0.01 })
+    .withMessage('Maximum discount amount must be a positive number'),
+  body('maxUses')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Max uses must be a positive integer'),
+  body('maxUsesPerUser')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Max uses per user must be a positive integer'),
+  body('validFrom')
+    .optional()
+    .isISO8601()
+    .withMessage('Valid from must be a valid date'),
+  body('validUntil')
+    .optional()
+    .isISO8601()
+    .withMessage('Valid until must be a valid date'),
+  body('applicableEvents')
+    .optional()
+    .isArray()
+    .withMessage('Applicable events must be an array'),
+  body('applicableTicketTypes')
+    .optional()
+    .isArray()
+    .withMessage('Applicable ticket types must be an array'),
+  body('isActive')
+    .optional()
+    .isBoolean()
+    .withMessage('Is active must be a boolean')
+];
+
+const validatePromoCodeValidation = [
+  body('eventId')
+    .isUUID()
+    .withMessage('Event ID must be a valid UUID'),
+  body('ticketTypes')
+    .optional()
+    .isArray()
+    .withMessage('Ticket types must be an array'),
+  body('orderAmount')
+    .isFloat({ min: 0 })
+    .withMessage('Order amount must be a non-negative number')
+];
+
+// Routes
+
+// Create promo code (requires authentication)
+router.post('/', auth, validatePromoCode, handleValidationErrors, PromoCodeController.create);
+
+// Get all promo codes (with optional filters)
+router.get('/', [
+  query('page').optional().isInt({ min: 1 }),
+  query('limit').optional().isInt({ min: 1, max: 100 }),
+  query('isActive').optional().isBoolean(),
+  query('eventId').optional().isUUID()
+], handleValidationErrors, PromoCodeController.getAll);
+
+// Get promo code by ID
+router.get('/:id', [
+  param('id').isUUID().withMessage('Invalid promo code ID')
+], handleValidationErrors, PromoCodeController.getById);
+
+// Validate promo code for an order
+// router.post('/validate', auth, [
+//   body('code').isString().isLength({ min: 3, max: 20 }),
+//   body('eventId').isUUID().withMessage('Event ID must be a valid UUID'),
+//   body('ticketTypes').optional().isArray().withMessage('Ticket types must be an array'),
+//   body('orderAmount').isFloat({ min: 0 }).withMessage('Order amount must be a non-negative number')
+// ], handleValidationErrors, PromoCodeController.validate);
+
+// Update promo code
+router.put('/:id', auth, [
+  param('id').isUUID().withMessage('Invalid promo code ID'),
+  body('code').optional().isString().isLength({ min: 3, max: 20 }).matches(/^[A-Z0-9]+$/).withMessage('Code must be 3-20 characters, uppercase letters and numbers only'),
+  body('name').optional().isString().isLength({ min: 1, max: 100 }).withMessage('Name must be 1-100 characters'),
+  body('description').optional().isString().isLength({ max: 500 }).withMessage('Description must be less than 500 characters'),
+  body('discountType').optional().isIn(['percentage', 'fixed_amount']).withMessage('Discount type must be percentage or fixed_amount'),
+  body('discountValue').optional().isFloat({ min: 0.01 }).withMessage('Discount value must be a positive number'),
+  body('minimumOrderAmount').optional().isFloat({ min: 0 }).withMessage('Minimum order amount must be a non-negative number'),
+  body('maximumDiscountAmount').optional().isFloat({ min: 0.01 }).withMessage('Maximum discount amount must be a positive number'),
+  body('maxUses').optional().isInt({ min: 1 }).withMessage('Max uses must be a positive integer'),
+  body('maxUsesPerUser').optional().isInt({ min: 1 }).withMessage('Max uses per user must be a positive integer'),
+  body('validFrom').optional().isISO8601().withMessage('Valid from must be a valid date'),
+  body('validUntil').optional().isISO8601().withMessage('Valid until must be a valid date'),
+  body('applicableEvents').optional().isArray().withMessage('Applicable events must be an array'),
+  body('applicableTicketTypes').optional().isArray().withMessage('Applicable ticket types must be an array'),
+  body('isActive').optional().isBoolean().withMessage('Is active must be a boolean')
+], handleValidationErrors, PromoCodeController.update);
+
+// Delete promo code
+router.delete('/:id', auth, [
+  param('id').isUUID().withMessage('Invalid promo code ID')
+], handleValidationErrors, PromoCodeController.delete);
+
+// Get promo codes created by current user
+router.get('/user/my-promo-codes', auth, PromoCodeController.getMyPromoCodes);
+
+// Get active promo codes for an event
+router.get('/event/:eventId/active', [
+  param('eventId').isUUID().withMessage('Invalid event ID')
+], handleValidationErrors, PromoCodeController.getActiveForEvent);
+
+// Get usage statistics for a promo code
+router.get('/:id/usage-stats', auth, [
+  param('id').isUUID().withMessage('Invalid promo code ID')
+], handleValidationErrors, PromoCodeController.getUsageStats);
+
+module.exports = router;

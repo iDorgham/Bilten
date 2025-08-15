@@ -1,0 +1,50 @@
+{
+  "name": "bilten-scanner",
+  "version": "1.0.0",
+  "description": "Mobile QR Scanner PWA for Bilten Event Ticket Validation",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 3002",
+    "pwa:build": "vite build && workbox generateSW",
+    "pwa:dev": "vite --mode pwa"
+  },
+  "keywords": [
+    "pwa",
+    "qr-scanner",
+    "ticket-validation",
+    "events",
+    "mobile"
+  ],
+  "author": "Bilten Team",
+  "license": "MIT",
+  "dependencies": {
+    "html5-qrcode": "^2.3.8",
+    "qrcode": "^1.5.3",
+    "vite": "^4.4.9",
+    "vite-plugin-pwa": "^0.16.4",
+    "workbox-window": "^7.0.0",
+    "workbox-webpack-plugin": "^7.0.0",
+    "workbox-precaching": "^7.0.0",
+    "workbox-routing": "^7.0.0",
+    "workbox-strategies": "^7.0.0",
+    "workbox-expiration": "^7.0.0",
+    "workbox-cacheable-response": "^7.0.0",
+    "workbox-background-sync": "^7.0.0",
+    "workbox-broadcast-update": "^7.0.0",
+    "workbox-navigation-preload": "^7.0.0",
+    "workbox-range-requests": "^7.0.0",
+    "workbox-streams": "^7.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^4.0.4",
+    "vite-plugin-html": "^3.2.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

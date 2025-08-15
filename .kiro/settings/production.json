@@ -1,0 +1,23 @@
+{
+  "environment": "production",
+  "database": {
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
+    "name": "eventchain_prod",
+    "ssl": true
+  },
+  "api": {
+    "baseUrl": "${API_BASE_URL}",
+    "timeout": 30000
+  },
+  "logging": {
+    "level": "warn",
+    "enableConsole": false,
+    "enableFile": true
+  },
+  "features": {
+    "enableDebugMode": false,
+    "enableMockData": false,
+    "enableTestingTools": false
+  }
+}
