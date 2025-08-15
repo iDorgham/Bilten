@@ -111,3 +111,6 @@ dist/
 
 # Docker
 .dockerignore
+
+# Specstory history files (may contain sensitive information)
+.specstory/history/*.md
