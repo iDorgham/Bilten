@@ -1,0 +1,108 @@
+{
+  "name": "Bilten Development Ruleset",
+  "description": "Development workflow rules for the Bilten event management platform",
+  "enforcement": "active",
+  "target": "branch",
+  "rules": [
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/ci.yml"
+          },
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/test.yml"
+          }
+        ]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_status_checks": [
+          {
+            "context": "CI / Build",
+            "integration_id": 123456
+          },
+          {
+            "context": "Tests",
+            "integration_id": 123456
+          },
+          {
+            "context": "Lint",
+            "integration_id": 123456
+          }
+        ],
+        "strict_required_status_checks_policy": false
+      }
+    },
+    {
+      "type": "required_pull_request_reviews",
+      "parameters": {
+        "required_approving_review_count": 1,
+        "require_code_owner_reviews": false,
+        "require_last_push_approval": false,
+        "dismiss_stale_reviews_on_push": false,
+        "required_review_thread_resolution": false
+      }
+    },
+    {
+      "type": "required_conversation_resolution",
+      "parameters": {
+        "required_conversation_resolution": false
+      }
+    },
+    {
+      "type": "required_linear_history",
+      "parameters": {
+        "required_linear_history": false
+      }
+    },
+    {
+      "type": "required_deployments",
+      "parameters": {
+        "required_environments": ["development"]
+      }
+    },
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/dev-deploy.yml"
+          }
+        ]
+      }
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 123456,
+      "actor_type": "Integration",
+      "bypass_mode": "always"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/develop",
+        "refs/heads/feature/*",
+        "refs/heads/hotfix/*"
+      ],
+      "exclude": [
+        "refs/heads/main",
+        "refs/heads/master",
+        "refs/heads/release/*"
+      ]
+    },
+    "repository_name": {
+      "include": [
+        "Bilten"
+      ]
+    }
+  }
+}
