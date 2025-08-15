@@ -1,40 +1,112 @@
-# Bilten Platform
+# 🎫 Bilten - Event Management & Ticketing Platform
 
-Bilten is a comprehensive event management and ticketing platform that enables organizers to create, manage, and promote events while providing attendees with a seamless ticket purchasing and event discovery experience.
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19.1.1-blue.svg)](https://reactjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com/)
+
+A comprehensive event management and ticketing platform that enables organizers to create, manage, and promote events while providing attendees with a seamless ticket purchasing and event discovery experience.
+
+## ✨ Features
+
+### 🎪 Event Management
+- **Event Creation & Management** - Create, edit, and manage events with rich details
+- **Ticket Types & Pricing** - Flexible ticket categories with dynamic pricing
+- **Event Calendar** - Interactive calendar view for event discovery
+- **Event Search & Filtering** - Advanced search with location, date, and category filters
+- **QR Code Generation** - Unique QR codes for each ticket
+
+### 💳 Payment & Checkout
+- **Stripe Integration** - Secure payment processing
+- **Promo Codes** - Discount system with analytics
+- **Order Management** - Complete order tracking and history
+- **Secure Checkout** - PCI-compliant payment flow
+
+### 👥 User Management
+- **Authentication System** - JWT-based auth with refresh tokens
+- **User Profiles** - Comprehensive user profiles and preferences
+- **Role-based Access** - Admin, organizer, and attendee roles
+- **Email Verification** - Secure account verification
+
+### 📱 Mobile Experience
+- **QR Scanner App** - PWA for ticket validation at events
+- **Responsive Design** - Mobile-first approach
+- **Offline Support** - PWA capabilities for scanner app
+
+### 📊 Analytics & Insights
+- **Real-time Analytics** - Live event performance metrics
+- **User Tracking** - Comprehensive user behavior analytics
+- **Sales Reports** - Detailed financial reporting
+- **Export Capabilities** - Data export in multiple formats
+
+### 🌐 Internationalization
+- **Multi-language Support** - English, Arabic, German, Spanish, French, Italian
+- **RTL Support** - Right-to-left language support
+- **Localized Content** - Region-specific content and pricing
+
+### 🔧 Technical Features
+- **Full-text Search** - PostgreSQL FTS for fast event discovery
+- **Image Optimization** - Automatic image processing and optimization
+- **File Upload** - AWS S3 integration for media storage
+- **Webhook System** - Real-time notifications and integrations
+- **Monitoring** - Comprehensive system monitoring and logging
+
+## 🏗️ Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend API   │    │   Scanner App   │
+│   (React)       │◄──►│   (Node.js)     │◄──►│   (PWA)         │
+│   Port: 3000    │    │   Port: 3001    │    │   Port: 3002    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   PostgreSQL    │    │     Redis       │    │   AWS S3        │
+│   Database      │    │     Cache       │    │   Storage       │
+│   Port: 5432    │    │   Port: 6379    │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- PostgreSQL 15+
-- Redis 7+
-- Docker & Docker Compose (recommended)
 
-### Current Status
-- ✅ **Backend API**: Running on http://localhost:3001
-- ✅ **Frontend**: Running on http://localhost:3000
-- ✅ **Database**: PostgreSQL container healthy
-- ✅ **Cache**: Redis container healthy
-- 🔴 **Testing**: Configuration issues (see [Immediate Tasks](Docs/IMMEDIATE_TASKS.md))
-- 🔴 **Git**: Repository not initialized
+- **Node.js** 18+ 
+- **PostgreSQL** 15+
+- **Redis** 7+
+- **Docker & Docker Compose** (recommended)
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/bilten/bilten-platform.git
+git clone https://github.com/your-username/bilten-platform.git
 cd bilten-platform
 ```
 
 2. **Install dependencies**
 ```bash
+# Install backend dependencies
 npm install
+
+# Install frontend dependencies
+cd bilten-frontend && npm install && cd ..
+
+# Install scanner app dependencies
+cd bilten-scanner && npm install && cd ..
 ```
 
 3. **Environment setup**
 ```bash
+# Copy environment files
 cp .env.example .env
-# Edit .env with your configuration
+cp bilten-frontend/.env.example bilten-frontend/.env
+cp bilten-scanner/.env.example bilten-scanner/.env
+
+# Edit environment variables
+nano .env
 ```
 
 4. **Database setup**
@@ -42,18 +114,22 @@ cp .env.example .env
 # Using Docker Compose (recommended)
 docker-compose up -d postgres redis
 
-# Or install PostgreSQL and Redis locally
-# Then run migrations
-npm run db:migrate
-npm run db:seed
+# Run migrations and seed data
+npm run migrate
+npm run seed
 ```
 
-5. **Start development server**
+5. **Start development servers**
 ```bash
+# Start backend API
 npm run dev
-```
 
-The API will be available at `http://localhost:3001`
+# In another terminal, start frontend
+cd bilten-frontend && npm start
+
+# In another terminal, start scanner app
+cd bilten-scanner && npm run dev
+```
 
 ### Using Docker
 
@@ -62,7 +138,7 @@ The API will be available at `http://localhost:3001`
 docker-compose up -d
 
 # View logs
-docker-compose logs -f api
+docker-compose logs -f
 
 # Stop services
 docker-compose down
@@ -72,68 +148,97 @@ docker-compose down
 
 ```
 bilten-platform/
-├── src/
-│   ├── routes/          # API route handlers
-│   ├── models/          # Database models
-│   ├── middleware/      # Express middleware
-│   ├── services/        # Business logic
-│   ├── utils/           # Utility functions
-│   └── server.js        # Application entry point
+├── src/                    # Backend API source
+│   ├── routes/            # API route handlers
+│   ├── controllers/       # Request controllers
+│   ├── middleware/        # Express middleware
+│   ├── services/          # Business logic
+│   ├── utils/             # Utility functions
+│   └── server.js          # Application entry point
+├── bilten-frontend/       # React frontend application
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── pages/         # Page components
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── services/      # API services
+│   │   └── utils/         # Frontend utilities
+│   └── public/            # Static assets
+├── bilten-scanner/        # QR Scanner PWA
+│   ├── src/
+│   │   ├── qr-scanner.js  # QR scanning logic
+│   │   └── ticket-validator.js
+│   └── index.html         # PWA entry point
 ├── database/
-│   ├── migrations/      # Database migrations
-│   └── seeds/           # Database seed files
-├── tests/               # Test files
-├── docs/                # Documentation
-└── .kiro/               # Kiro IDE configuration
+│   ├── migrations/        # Database migrations
+│   └── seeds/             # Database seed files
+├── tests/                 # Test files
+├── Docs/                  # Documentation
+└── uploads/               # File uploads
 ```
 
 ## 🛠️ Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server with hot reload
-- `npm start` - Start production server
-- `npm test` - Run tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-- `npm run db:migrate` - Run database migrations
-- `npm run db:seed` - Seed database with sample data
-- `npm run db:rollback` - Rollback last migration
+#### Backend
+```bash
+npm run dev              # Start development server with hot reload
+npm start               # Start production server
+npm test                # Run tests
+npm run test:watch      # Run tests in watch mode
+npm run lint            # Run ESLint
+npm run lint:fix        # Fix ESLint issues
+npm run migrate         # Run database migrations
+npm run seed            # Seed database with sample data
+```
 
-### API Endpoints
+#### Frontend
+```bash
+cd bilten-frontend
+npm start               # Start development server
+npm run build           # Build for production
+npm test                # Run tests
+```
 
-#### Health Check
-- `GET /health` - API health status
+#### Scanner App
+```bash
+cd bilten-scanner
+npm run dev             # Start development server
+npm run build           # Build PWA
+npm run preview         # Preview production build
+```
 
-#### Authentication
+## 🔌 API Endpoints
+
+### Authentication
 - `POST /v1/auth/register` - User registration
 - `POST /v1/auth/login` - User login
 - `POST /v1/auth/logout` - User logout
 - `POST /v1/auth/refresh` - Refresh JWT token
 
-#### Users
-- `GET /v1/users/profile` - Get user profile
-- `PUT /v1/users/profile` - Update user profile
-- `GET /v1/users/:id` - Get user by ID
-
-#### Events
-- `GET /v1/events` - List events
-- `POST /v1/events` - Create event
+### Events
+- `GET /v1/events` - List events with filtering
+- `POST /v1/events` - Create new event
 - `GET /v1/events/:id` - Get event details
 - `PUT /v1/events/:id` - Update event
 - `DELETE /v1/events/:id` - Delete event
 
-## 🏗️ Architecture
+### Tickets
+- `GET /v1/tickets` - List tickets
+- `POST /v1/tickets` - Create ticket
+- `GET /v1/tickets/:id` - Get ticket details
+- `PUT /v1/tickets/:id` - Update ticket
 
-Bilten follows a modular architecture with the following components:
+### Orders
+- `GET /v1/orders` - List user orders
+- `POST /v1/orders` - Create new order
+- `GET /v1/orders/:id` - Get order details
+- `POST /v1/orders/:id/validate` - Validate ticket
 
-- **API Server** - Express.js REST API
-- **Database** - PostgreSQL with Knex.js ORM
-- **Cache** - Redis for session and data caching
-- **File Storage** - AWS S3 for file uploads
-- **Payment Processing** - Stripe integration
-- **Email Service** - SMTP with Nodemailer
+### Analytics
+- `GET /v1/analytics/events` - Event analytics
+- `GET /v1/analytics/sales` - Sales reports
+- `GET /v1/analytics/users` - User analytics
 
 ## 🧪 Testing
 
@@ -146,13 +251,14 @@ npm run test:watch
 
 # Run tests with coverage
 npm run test:coverage
+
+# Run specific test suites
+npm test -- --testPathPattern=auth
 ```
 
 ## 📚 Documentation
 
-### Current Documentation
 - [Project Progress Report](Docs/PROJECT_PROGRESS_REPORT.md) - Comprehensive project status
-- [Immediate Tasks](Docs/IMMEDIATE_TASKS.md) - Critical issues and fixes needed
 - [Development Guide](Docs/DEVELOPMENT.md) - Setup and development workflow
 - [API Integration](Docs/FRONTEND_INTEGRATION.md) - Frontend-Backend integration
 - [Payment System](Docs/PAYMENT_SYSTEM_DOCUMENTATION.md) - Stripe integration
@@ -162,15 +268,73 @@ npm run test:coverage
 - [Search System](Docs/SEARCH_SYSTEM_TESTING.md) - Full-text search
 - [Monitoring](Docs/MONITORING_SETUP.md) - System monitoring
 
-### Missing Documentation
-- [ ] Deployment Guide
-- [ ] Testing Guide  
-- [ ] Troubleshooting Guide
-- [ ] API Reference (Swagger/OpenAPI)
+## 🚀 Deployment
+
+### Production Deployment
+
+1. **Environment Setup**
+```bash
+# Set production environment variables
+NODE_ENV=production
+DATABASE_URL=your_production_db_url
+REDIS_URL=your_production_redis_url
+AWS_ACCESS_KEY_ID=your_aws_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret
+STRIPE_SECRET_KEY=your_stripe_secret
+```
+
+2. **Build Applications**
+```bash
+# Build backend
+npm run build
+
+# Build frontend
+cd bilten-frontend && npm run build && cd ..
+
+# Build scanner app
+cd bilten-scanner && npm run build && cd ..
+```
+
+3. **Database Migration**
+```bash
+npm run migrate
+```
+
+4. **Start Production Server**
+```bash
+npm start
+```
+
+### Docker Deployment
+
+```bash
+# Build and run with Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
+
+# Or build individual images
+docker build -t bilten-backend .
+docker build -t bilten-frontend ./bilten-frontend
+docker build -t bilten-scanner ./bilten-scanner
+```
 
 ## 🤝 Contributing
 
-Please read our [Contributing Guide](.kiro/CONTRIBUTING.md) and [Code of Conduct](.kiro/CODE_OF_CONDUCT.md).
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Style
+
+- Follow ESLint configuration
+- Use Prettier for code formatting
+- Write tests for new features
+- Update documentation as needed
 
 ## 📄 License
 
@@ -180,30 +344,37 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Documentation**: [docs.bilten.com](https://docs.bilten.com)
 - **Email**: support@bilten.com
-- **Issues**: [GitHub Issues](https://github.com/bilten/bilten-platform/issues)
+- **Issues**: [GitHub Issues](https://github.com/your-username/bilten-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-username/bilten-platform/discussions)
 
 ## 🗺️ Roadmap
 
 ### Current Phase: Development & Testing
-- [ ] Fix testing infrastructure issues
-- [ ] Initialize git repository
 - [ ] Complete test coverage
-- [ ] Prepare for deployment
+- [ ] Performance optimization
+- [ ] Security audit
+- [ ] CI/CD pipeline setup
 
 ### Next Phase: Production Ready
-- [ ] Set up CI/CD pipeline
-- [ ] Configure production environment
-- [ ] Security audit
-- [ ] Performance optimization
+- [ ] Load testing
+- [ ] Monitoring and alerting
+- [ ] Backup and recovery
+- [ ] Documentation completion
 
 ### Future Features
 - [ ] Mobile app development
-- [ ] Advanced analytics
+- [ ] Advanced analytics dashboard
 - [ ] Multi-tenant support
 - [ ] API marketplace
+- [ ] Social media integration
+- [ ] Live streaming integration
 
-See [Project Progress Report](Docs/PROJECT_PROGRESS_REPORT.md) for detailed status and [Immediate Tasks](Docs/IMMEDIATE_TASKS.md) for current priorities.
+## 🙏 Acknowledgments
+
+- Built with ❤️ by the Bilten Team
+- Powered by React, Node.js, and PostgreSQL
+- Special thanks to our contributors and the open-source community
 
 ---
 
-Built with ❤️ by the Bilten Team
+**Bilten** - Making event management simple and efficient since 2025.
