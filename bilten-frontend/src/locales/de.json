@@ -1,0 +1,250 @@
+{
+  "meta": {
+    "language": "de",
+    "name": "German",
+    "nativeName": "Deutsch",
+    "flag": "🇩🇪",
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-11T00:00:00Z",
+    "completionPercentage": 45,
+    "isRTL": false,
+    "dateFormat": "DD.MM.YYYY",
+    "numberFormat": "de-DE",
+    "currencyCode": "EUR"
+  },
+  "nav": {
+    "events": "Veranstaltungen",
+    "news": "Nachrichten",
+    "about": "Über uns",
+    "help": "Hilfe",
+    "menu": "Menü",
+    "basket": "Warenkorb",
+    "basketEmpty": "Ihr Warenkorb ist leer",
+    "basketItems": "Artikel",
+    "basketItemsPlural": "Artikel",
+    "viewBasket": "Warenkorb anzeigen",
+    "total": "Gesamt:",
+    "moreItems": "weitere Artikel",
+    "moreItemsPlural": "weitere Artikel",
+    "notifications": "Benachrichtigungen",
+    "noNotifications": "Keine Benachrichtigungen",
+    "unreadNotification": "ungelesene Benachrichtigung",
+    "unreadNotifications": "ungelesene Benachrichtigungen",
+    "viewAllNotifications": "Alle Benachrichtigungen anzeigen",
+    "quantity": "Menge",
+    "removeFromBasket": "Aus Warenkorb entfernen",
+    "markAsRead": "Als gelesen markieren",
+    "deleteNotification": "Benachrichtigung löschen"
+  },
+  "auth": {
+    "signin": "Anmelden",
+    "signup": "Registrieren"
+  },
+  "home": {
+    "discover": "Entdecke erstaunliche Events in deiner Nähe",
+    "askBilten": "Frage Bilten",
+    "loginToChat": "Anmelden, um mit Bilten zu chatten",
+    "tryAsking": "Versuche zu fragen:",
+    "technoEvents": "Zeige mir Techno-Events",
+    "melodicTechno": "Melodischer Techno wie Monolink",
+    "afroHouse": "Afro House und Organic House",
+    "amrDiabConcerts": "Amr Diab Konzerte",
+    "massarEgbari": "Massar Egbari Auftritte"
+  },
+  "footer": {
+    "company": "Unternehmen",
+    "events": "Veranstaltungen",
+    "support": "Support",
+    "legal": "Rechtliches",
+    "connect": "Verbinden"
+  },
+  "language": {
+    "select": "Sprache auswählen"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "view": "Anzeigen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "search": "Suchen",
+    "filter": "Filter",
+    "sort": "Sortieren",
+    "all": "Alle",
+    "none": "Keine",
+    "yes": "Ja",
+    "no": "Nein",
+    "ok": "OK",
+    "switchToLight": "Zum hellen Modus wechseln",
+    "switchToDark": "Zum dunklen Modus wechseln",
+    "justNow": "Gerade eben",
+    "minutesAgo": "Min. her",
+    "hoursAgo": "Std. her",
+    "daysAgo": "Tage her"
+  },
+  "menu": {
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "logout": "Abmelden",
+    "myPasket": "Mein Warenkorb",
+    "myProfile": "Mein Profil",
+    "accountSettings": "Kontoeinstellungen",
+    "notificationPreferences": "Benachrichtigungseinstellungen",
+    "faq": "FAQ",
+    "qa": "F&A",
+    "helpSupport": "Hilfe & Support",
+    "dashboard": "Dashboard",
+    "userManagement": "Benutzerverwaltung",
+    "contentModeration": "Inhaltsmoderation",
+    "platformAnalytics": "Plattform-Analytik",
+    "financialReports": "Finanzberichte",
+    "systemConfiguration": "Systemkonfiguration",
+    "securityCompliance": "Sicherheit & Compliance",
+    "teamManagement": "Team-Management",
+    "eventsManagement": "Veranstaltungsverwaltung",
+    "createEvent": "Veranstaltung erstellen",
+    "ticketManagement": "Ticket-Management",
+    "organization": "Organisation",
+    "financial": "Finanzen",
+    "analyticsInsights": "Analytik & Einblicke",
+    "marketing": "Marketing",
+    "customerSupport": "Kundensupport",
+    "myTickets": "Meine Tickets",
+    "orderHistory": "Bestellverlauf",
+    "favoriteEvents": "Lieblingsveranstaltungen",
+    "paymentMethods": "Zahlungsmethoden"
+  },
+  "mobile": {
+    "menu": "Menü",
+    "mainNavigation": "Hauptnavigation"
+  },
+  "help": {
+    "title": "Hilfecenter",
+    "subtitle": "Finden Sie Antworten auf häufige Fragen und erhalten Sie die Unterstützung, die Sie benötigen",
+    "searchPlaceholder": "Nach Hilfeartikeln, FAQ oder Themen suchen...",
+    "noResults": "Keine Ergebnisse gefunden",
+    "noResultsSubtitle": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie unsere Kategorien oben.",
+    "clearSearch": "Suche löschen",
+    "stillNeedHelp": "Brauchen Sie noch Hilfe?",
+    "supportTeam": "Unser Support-Team ist 24/7 für Sie da",
+    "contactSupport": "Support kontaktieren",
+    "sendMessage": "Nachricht senden",
+    "legalPolicies": "Rechtliches & Richtlinien",
+    "popularTopics": "Beliebte Themen",
+    "learnMore": "Mehr erfahren",
+    "browseFAQ": "FAQ durchsuchen",
+    "quickHelp": "Schnelle Hilfe-Themen",
+    "browseCategories": "Hilfekategorien durchsuchen",
+    "categories": {
+      "gettingStarted": "Erste Schritte",
+      "gettingStartedDesc": "Erfahren Sie, wie Sie ein Konto erstellen und Veranstaltungen finden",
+      "accountManagement": "Kontoverwaltung",
+      "accountManagementDesc": "Verwalten Sie Ihr Profil, Einstellungen und Kontodetails",
+      "eventDiscovery": "Veranstaltungsentdeckung",
+      "eventDiscoveryDesc": "Finden, suchen und entdecken Sie Veranstaltungen, die Sie interessieren",
+      "tickets": "Tickets",
+      "ticketsDesc": "Kaufen, verwalten und greifen Sie auf Ihre Tickets zu",
+      "payments": "Zahlungen & Abrechnung",
+      "paymentsDesc": "Zahlungsmethoden, Rückerstattungen und Abrechnungsinformationen",
+      "favorites": "Favoriten & Lesezeichen",
+      "favoritesDesc": "Speichern und verwalten Sie Ihre Lieblingsveranstaltungen",
+      "orderHistory": "Bestellverlauf",
+      "orderHistoryDesc": "Vergangene Käufe anzeigen und Quittungen herunterladen",
+      "mobileApp": "Mobile App",
+      "mobileAppDesc": "Laden Sie unsere mobile App herunter und nutzen Sie sie"
+    },
+    "quick": {
+      "createAccount": "Konto erstellen",
+      "findEvents": "Veranstaltungen finden",
+      "viewTickets": "Tickets anzeigen",
+      "favoriteEvents": "Lieblingsveranstaltungen",
+      "orderHistory": "Bestellverlauf",
+      "contactSupport": "Support kontaktieren"
+    },
+    "contact": {
+      "liveChat": {
+        "title": "Live-Chat",
+        "description": "Erhalten Sie sofortige Hilfe von unserem Support-Team",
+        "action": "Chat starten"
+      },
+      "email": {
+        "title": "E-Mail-Support",
+        "description": "Senden Sie uns eine detaillierte Nachricht",
+        "action": "E-Mail senden"
+      },
+      "phone": {
+        "title": "Telefon-Support",
+        "description": "Rufen Sie uns während der Geschäftszeiten an",
+        "action": "Jetzt anrufen"
+      }
+    }
+  },
+  "qa": {
+    "title": "Fragen und",
+    "answers": "Antworten",
+    "subtitle": "Finden Sie umfassende Antworten auf alle Ihre Fragen zu Bilten. Suchen Sie, durchsuchen Sie Kategorien und erhalten Sie die Hilfe, die Sie benötigen.",
+    "searchPlaceholder": "Nach Fragen, Antworten oder Themen suchen...",
+    "browseByCategory": "Nach Kategorie durchsuchen",
+    "recentQuestions": "Aktuelle Fragen",
+    "allQuestions": "Alle Fragen",
+    "questions": "Fragen",
+    "of": "von",
+    "views": "Aufrufe",
+    "helpful": "hilfreich",
+    "markHelpful": "Als hilfreich markieren",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "recently": "Kürzlich",
+    "needMoreHelp": "Brauchen Sie mehr Hilfe?",
+    "stats": {
+      "questions": "Fragen",
+      "categories": "Kategorien",
+      "support": "Support",
+      "satisfaction": "Zufriedenheit"
+    },
+    "noResults": {
+      "title": "Keine Fragen gefunden",
+      "subtitle": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie alle Kategorien unten.",
+      "clearFilters": "Filter löschen"
+    },
+    "categories": {
+      "all": "Alle",
+      "general": "Allgemein",
+      "organizers": "Veranstalter",
+      "attendees": "Teilnehmer",
+      "payments": "Zahlungen",
+      "technical": "Technisch",
+      "security": "Sicherheit",
+      "advanced": "Erweitert"
+    },
+    "contact": {
+      "liveChat": {
+        "title": "Live-Chat",
+        "description": "Erhalten Sie sofortige Hilfe von unserem Support-Team",
+        "action": "Chat starten"
+      },
+      "email": {
+        "title": "E-Mail-Support",
+        "description": "Senden Sie uns eine detaillierte Nachricht",
+        "action": "E-Mail senden"
+      },
+      "phone": {
+        "title": "Telefon-Support",
+        "description": "Rufen Sie uns während der Geschäftszeiten an",
+        "action": "Jetzt anrufen"
+      }
+    },
+    "getStarted": {
+      "title": "Bereit zum Starten?",
+      "subtitle": "Erkunden Sie unser Hilfecenter oder kontaktieren Sie unser Support-Team für persönliche Unterstützung.",
+      "helpCenter": "Hilfecenter",
+      "contactUs": "Kontaktieren Sie uns"
+    }
+  }
+}
