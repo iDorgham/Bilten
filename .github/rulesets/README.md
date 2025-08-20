@@ -181,3 +181,4 @@ For questions or issues with rulesets:
 ---
 
 **Note**: These rulesets are designed to balance security, quality, and development velocity. Adjust configurations based on your team's needs and project requirements.
+
