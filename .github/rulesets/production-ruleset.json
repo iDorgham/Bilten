@@ -1,0 +1,142 @@
+{
+  "name": "Bilten Production Ruleset",
+  "description": "Production deployment rules for the Bilten event management platform",
+  "enforcement": "active",
+  "target": "branch",
+  "rules": [
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/deploy-production.yml"
+          },
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/security-audit.yml"
+          },
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/performance-test.yml"
+          },
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/e2e-tests.yml"
+          }
+        ]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_status_checks": [
+          {
+            "context": "Security Audit",
+            "integration_id": 123456
+          },
+          {
+            "context": "Performance Tests",
+            "integration_id": 123456
+          },
+          {
+            "context": "E2E Tests",
+            "integration_id": 123456
+          },
+          {
+            "context": "Load Tests",
+            "integration_id": 123456
+          },
+          {
+            "context": "Database Migration",
+            "integration_id": 123456
+          }
+        ],
+        "strict_required_status_checks_policy": true
+      }
+    },
+    {
+      "type": "required_pull_request_reviews",
+      "parameters": {
+        "required_approving_review_count": 3,
+        "require_code_owner_reviews": true,
+        "require_last_push_approval": true,
+        "dismiss_stale_reviews_on_push": true,
+        "required_review_thread_resolution": true
+      }
+    },
+    {
+      "type": "required_signatures",
+      "parameters": {
+        "required_signatures": true
+      }
+    },
+    {
+      "type": "required_linear_history",
+      "parameters": {
+        "required_linear_history": true
+      }
+    },
+    {
+      "type": "required_conversation_resolution",
+      "parameters": {
+        "required_conversation_resolution": true
+      }
+    },
+    {
+      "type": "required_deployments",
+      "parameters": {
+        "required_environments": ["staging", "production"]
+      }
+    },
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/backup-verification.yml"
+          }
+        ]
+      }
+    },
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/rollback-plan.yml"
+          }
+        ]
+      }
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 123456,
+      "actor_type": "Integration",
+      "bypass_mode": "never"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/main",
+        "refs/heads/master"
+      ],
+      "exclude": [
+        "refs/heads/develop",
+        "refs/heads/feature/*",
+        "refs/heads/hotfix/*",
+        "refs/heads/release/*"
+      ]
+    },
+    "repository_name": {
+      "include": [
+        "Bilten"
+      ]
+    }
+  }
+}
+

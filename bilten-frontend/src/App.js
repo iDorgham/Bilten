@@ -17,14 +17,31 @@ import {
 } from './routes/ProtectedRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
 import TranslationValidator from './components/TranslationValidator';
 import ApiStatusIndicator from './components/ApiStatusIndicator';
 
-// Wrapper component to conditionally render footer
+// Wrapper component to conditionally render layout
 const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isAdminPage = location.pathname.startsWith('/admin');
 
+  // Admin pages use their own layout (AdminLayout), so don't wrap them
+  if (isAdminPage) {
+    return (
+      <div className="min-h-screen">
+        <Routes>
+          {/* Admin Routes - Protected by admin authentication */}
+          <Route path="/admin/*" element={<ProtectedAdminRoutesWithAuth />} />
+        </Routes>
+        <TranslationValidator />
+        <ApiStatusIndicator />
+      </div>
+    );
+  }
+
+  // Regular pages use standard layout
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
@@ -44,15 +61,12 @@ const AppContent = () => {
           {routeConfig.redirects.map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />
           ))}
-
-          {/* Protected Routes - These will be handled by the route guards */}
-          <Route path="/*" element={<ProtectedUserRoutesWithAuth />} />
-          
-          {/* Admin Routes - Protected by admin authentication */}
-          <Route path="/admin/*" element={<ProtectedAdminRoutesWithAuth />} />
           
           {/* Organizer Routes - Protected by organizer authentication */}
           <Route path="/organizer/*" element={<ProtectedOrganizerRoutesWithAuth />} />
+
+          {/* Protected User Routes - These will be handled by the route guards (catch-all, must be last) */}
+          <Route path="/*" element={<ProtectedUserRoutesWithAuth />} />
 
           {/* Error Routes */}
           {routeConfig.errors.map((route) => (
@@ -71,9 +85,11 @@ function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <ThemeProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </ThemeProvider>
       </LanguageProvider>
     </AuthProvider>
   );

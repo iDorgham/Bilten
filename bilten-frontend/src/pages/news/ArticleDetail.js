@@ -30,7 +30,7 @@ const ArticleDetail = () => {
       const { article: articleData, relatedArticles: relatedData } = response.data.data;
       
       setArticle(articleData);
-      setRelatedArticles(relatedData);
+      setRelatedArticles(relatedData || []);
       setError('');
     } catch (err) {
       console.error('Failed to fetch article:', err);
@@ -55,6 +55,11 @@ const ArticleDetail = () => {
       business: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
       marketing: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400',
       design: 'bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-400',
+      platform: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400',
+      tips: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+      community: 'bg-teal-100 text-teal-800 dark:bg-teal-900/20 dark:text-teal-400',
+      sustainability: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400',
+      music: 'bg-rose-100 text-rose-800 dark:bg-rose-900/20 dark:text-rose-400',
       general: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
     };
     return colors[category] || colors.general;
@@ -228,15 +233,29 @@ const ArticleDetail = () => {
       </header>
 
       {/* Featured Image */}
-      {article.featured_image_url && (
+      {(article.featured_image_url || article.image_url) && (
         <div className="mb-8 relative overflow-hidden rounded-lg shadow-lg">
           <img
-            src={article.featured_image_url}
+            src={article.featured_image_url || article.image_url}
             alt={article.title}
             className="w-full h-64 md:h-96 object-cover transition-transform duration-300 hover:scale-105"
             onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=400&fit=crop';
+              // Replace placeholder URLs with working Unsplash images
+              if (e.target.src.includes('via.placeholder.com')) {
+                const fallbackImages = [
+                  'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=400&fit=crop',
+                  'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop',
+                  'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=400&fit=crop',
+                  'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=400&fit=crop'
+                ];
+                const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+                e.target.src = fallbackImages[randomIndex];
+              } else {
+                e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=400&fit=crop';
+              }
+              e.target.onerror = null; // Prevent infinite loop
             }}
+            loading="lazy"
           />
           {/* Image overlay for better visual appeal */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
@@ -275,12 +294,26 @@ const ArticleDetail = () => {
                 {/* Article Image */}
                 <div className="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
                   <img
-                    src={relatedArticle.featured_image_url || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop'}
+                    src={relatedArticle.featured_image_url || relatedArticle.image_url || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop'}
                     alt={relatedArticle.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop';
+                      // Replace placeholder URLs with working Unsplash images
+                      if (e.target.src.includes('via.placeholder.com')) {
+                        const fallbackImages = [
+                          'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=300&fit=crop'
+                        ];
+                        const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+                        e.target.src = fallbackImages[randomIndex];
+                      } else {
+                        e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop';
+                      }
+                      e.target.onerror = null; // Prevent infinite loop
                     }}
+                    loading="lazy"
                   />
                 </div>
 

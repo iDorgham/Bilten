@@ -1,0 +1,331 @@
+# Bilten Project - Cursor Rules
+
+## Project Overview
+Bilten is a comprehensive event management platform with React frontend, Node.js backend, and PostgreSQL database. The project includes admin panels, user management, event creation, ticket sales, and analytics.
+
+## Code Style & Standards
+
+### React/JavaScript
+- Use functional components with hooks
+- Prefer arrow functions for components
+- Use destructuring for props and state
+- Implement proper TypeScript-like prop validation
+- Use meaningful variable and function names
+- Follow camelCase for variables and PascalCase for components
+
+### CSS/Styling
+- Use Tailwind CSS for styling
+- Implement responsive design patterns
+- Use CSS Grid and Flexbox appropriately
+- Follow mobile-first approach
+- Implement dark mode support using theme contexts
+
+### File Organization
+- Group related components in feature folders
+- Use index.js files for clean imports
+- Separate business logic from UI components
+- Keep components focused and single-purpose
+
+## Architecture Patterns
+
+### Frontend Architecture
+- Use Context API for global state management
+- Implement custom hooks for reusable logic
+- Use React Router for navigation
+- Implement proper error boundaries
+- Use lazy loading for performance
+
+### Backend Architecture
+- Use Express.js with middleware pattern
+- Implement proper error handling
+- Use async/await for database operations
+- Implement proper validation and sanitization
+- Use environment variables for configuration
+
+### Database Design
+- Use PostgreSQL with proper indexing
+- Implement foreign key constraints
+- Use transactions for data integrity
+- Follow normalization principles
+- Implement proper backup strategies
+
+## Security Guidelines
+
+### Authentication & Authorization
+- Implement JWT tokens with proper expiration
+- Use bcrypt for password hashing
+- Implement role-based access control (RBAC)
+- Validate all user inputs
+- Use HTTPS in production
+
+### Data Protection
+- Sanitize all user inputs
+- Implement rate limiting
+- Use prepared statements for SQL queries
+- Implement proper CORS policies
+- Log security events
+
+## Performance Guidelines
+
+### Frontend Performance
+- Implement code splitting
+- Use React.memo for expensive components
+- Optimize bundle size
+- Implement proper caching strategies
+- Use lazy loading for images
+
+### Backend Performance
+- Implement database query optimization
+- Use connection pooling
+- Implement proper caching
+- Monitor API response times
+- Use compression middleware
+
+## Testing Strategy
+
+### Frontend Testing
+- Write unit tests for components
+- Implement integration tests
+- Use React Testing Library
+- Test user interactions
+- Implement accessibility testing
+
+### Backend Testing
+- Write unit tests for API endpoints
+- Implement integration tests
+- Test database operations
+- Mock external services
+- Test error scenarios
+
+## Documentation Standards
+
+### Code Documentation
+- Write JSDoc comments for functions
+- Document complex business logic
+- Keep README files updated
+- Document API endpoints
+- Maintain changelog
+
+### Architecture Documentation
+- Document system architecture
+- Maintain API documentation
+- Document database schema
+- Keep deployment guides updated
+- Document troubleshooting procedures
+
+## Development Workflow
+
+### Git Practices
+- Use meaningful commit messages
+- Create feature branches
+- Implement pull request reviews
+- Keep main branch stable
+- Use conventional commits
+
+### Code Review
+- Review for security vulnerabilities
+- Check for performance issues
+- Ensure proper error handling
+- Verify accessibility compliance
+- Test edge cases
+
+## Environment Configuration
+
+### Development Environment
+- Use .env files for configuration
+- Implement proper logging
+- Use development databases
+- Enable hot reloading
+- Implement debugging tools
+
+### Production Environment
+- Use environment variables
+- Implement proper monitoring
+- Use production databases
+- Enable compression
+- Implement CDN for static assets
+
+## Error Handling
+
+### Frontend Error Handling
+- Implement error boundaries
+- Show user-friendly error messages
+- Log errors for debugging
+- Handle network errors gracefully
+- Implement retry mechanisms
+
+### Backend Error Handling
+- Use proper HTTP status codes
+- Implement structured error responses
+- Log errors with context
+- Handle database errors gracefully
+- Implement circuit breakers
+
+## Monitoring & Logging
+
+### Application Monitoring
+- Monitor API response times
+- Track error rates
+- Monitor database performance
+- Implement health checks
+- Use proper logging levels
+
+### User Analytics
+- Track user interactions
+- Monitor conversion rates
+- Analyze performance metrics
+- Implement A/B testing
+- Track business metrics
+
+## Deployment & DevOps
+
+### CI/CD Pipeline
+- Implement automated testing
+- Use staging environments
+- Implement blue-green deployments
+- Monitor deployment health
+- Implement rollback procedures
+
+### Infrastructure
+- Use containerization (Docker)
+- Implement load balancing
+- Use auto-scaling
+- Implement backup strategies
+- Monitor infrastructure health
+
+## Accessibility & UX
+
+### Accessibility Standards
+- Follow WCAG 2.1 guidelines
+- Implement keyboard navigation
+- Use proper ARIA labels
+- Ensure color contrast
+- Test with screen readers
+
+### User Experience
+- Implement responsive design
+- Use intuitive navigation
+- Provide clear feedback
+- Implement loading states
+- Optimize for mobile devices
+
+## Internationalization
+
+### Multi-language Support
+- Use i18n libraries
+- Implement RTL support
+- Handle date/time formatting
+- Support multiple currencies
+- Implement cultural adaptations
+
+## Data Management
+
+### State Management
+- Use Context API for global state
+- Implement proper state updates
+- Handle loading states
+- Implement optimistic updates
+- Use proper data caching
+
+### Data Validation
+- Validate all user inputs
+- Implement server-side validation
+- Use proper data types
+- Handle edge cases
+- Implement data sanitization
+
+## API Design
+
+### RESTful APIs
+- Use proper HTTP methods
+- Implement proper status codes
+- Use consistent naming conventions
+- Implement pagination
+- Use proper error responses
+
+### API Documentation
+- Document all endpoints
+- Provide request/response examples
+- Document error codes
+- Maintain API versioning
+- Use OpenAPI/Swagger
+
+## Database Management
+
+### Schema Design
+- Use proper data types
+- Implement constraints
+- Use indexes appropriately
+- Follow naming conventions
+- Document relationships
+
+### Migration Strategy
+- Use version-controlled migrations
+- Test migrations thoroughly
+- Implement rollback procedures
+- Document schema changes
+- Monitor migration performance
+
+## Security Best Practices
+
+### Input Validation
+- Validate all inputs
+- Sanitize user data
+- Use parameterized queries
+- Implement CSRF protection
+- Validate file uploads
+
+### Authentication
+- Use secure password policies
+- Implement MFA
+- Use secure session management
+- Implement account lockout
+- Monitor login attempts
+
+## Performance Optimization
+
+### Frontend Optimization
+- Implement code splitting
+- Use lazy loading
+- Optimize images
+- Minimize bundle size
+- Use CDN for assets
+
+### Backend Optimization
+- Optimize database queries
+- Implement caching
+- Use connection pooling
+- Monitor memory usage
+- Implement rate limiting
+
+## Quality Assurance
+
+### Code Quality
+- Use ESLint and Prettier
+- Implement pre-commit hooks
+- Use TypeScript for type safety
+- Follow SOLID principles
+- Implement code reviews
+
+### Testing Coverage
+- Maintain high test coverage
+- Test edge cases
+- Implement integration tests
+- Use mocking strategies
+- Test error scenarios
+
+## Maintenance & Support
+
+### Code Maintenance
+- Regular dependency updates
+- Security patches
+- Performance monitoring
+- Bug fixes
+- Feature updates
+
+### Support Procedures
+- Document common issues
+- Implement troubleshooting guides
+- Maintain knowledge base
+- Provide user support
+- Monitor system health

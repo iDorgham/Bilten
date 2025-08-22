@@ -503,9 +503,10 @@ const mockArticles = [
     category: "music",
     author: "Techno Scene Egypt",
     published_at: "2025-01-10T10:00:00Z",
-    image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=400&fit=crop",
-    views: 2850,
-    read_time: 8
+    featured_image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=400&fit=crop",
+    view_count: 2850,
+    read_time: 8,
+    tags: ["techno", "North Coast", "festivals", "Egypt"]
   },
   {
     id: 2,
@@ -515,9 +516,10 @@ const mockArticles = [
     category: "music",
     author: "Red Sea Events",
     published_at: "2025-01-08T14:30:00Z",
-    image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=400&fit=crop",
-    views: 1890,
-    read_time: 6
+    featured_image_url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=400&fit=crop",
+    view_count: 1890,
+    read_time: 6,
+    tags: ["El Gouna", "Red Sea", "organic house", "sunset sessions"]
   },
   {
     id: 3,
@@ -527,9 +529,10 @@ const mockArticles = [
     category: "music",
     author: "Cairo Techno Guide",
     published_at: "2025-01-05T16:00:00Z",
-    image_url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&h=400&fit=crop",
-    views: 3200,
-    read_time: 10
+    featured_image_url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&h=400&fit=crop",
+    view_count: 3200,
+    read_time: 10,
+    tags: ["Cairo", "techno", "Opera House", "underground venues"]
   },
   {
     id: 4,
@@ -539,9 +542,10 @@ const mockArticles = [
     category: "music",
     author: "Entertainment Weekly Egypt",
     published_at: "2025-01-03T12:00:00Z",
-    image_url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop",
-    views: 4500,
-    read_time: 7
+    featured_image_url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop",
+    view_count: 4500,
+    read_time: 7,
+    tags: ["Amr Diab", "New Administrative Capital", "concert", "Egyptian music"]
   },
   {
     id: 5,
@@ -551,9 +555,10 @@ const mockArticles = [
     category: "music",
     author: "Electronic Rhythms Egypt",
     published_at: "2025-01-01T18:00:00Z",
-    image_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop",
-    views: 2100,
-    read_time: 9
+    featured_image_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop",
+    view_count: 2100,
+    read_time: 9,
+    tags: ["melodic techno", "electronic music", "cultural movement", "Egypt"]
   },
   {
     id: 6,
@@ -563,9 +568,10 @@ const mockArticles = [
     category: "music",
     author: "Pop Scene Egypt",
     published_at: "2024-12-28T20:00:00Z",
-    image_url: "https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=400&fit=crop",
-    views: 1750,
-    read_time: 8
+    featured_image_url: "https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=400&fit=crop",
+    view_count: 1750,
+    read_time: 8,
+    tags: ["Mohamed Hamaki", "Egyptian pop", "Arabic music", "Alexandria"]
   }
 ];
 
@@ -698,9 +704,17 @@ export const mockArticlesAPI = {
       throw new Error('Article not found');
     }
     
+    // Get related articles (same category, excluding current article)
+    const relatedArticles = mockArticles
+      .filter(a => a.id !== parseInt(id) && a.category === article.category)
+      .slice(0, 3);
+    
     return {
       data: {
-        data: { article }
+        data: { 
+          article,
+          relatedArticles
+        }
       }
     };
   }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   ChartBarIcon, 
   CalendarDaysIcon, 
@@ -15,6 +16,7 @@ import EventAnalytics from '../../components/analytics/EventAnalytics';
 
 const Analytics = () => {
   const { user, isAdmin, isOrganizer } = useAuth();
+  const { currentTheme, isDark } = useTheme();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -122,27 +124,27 @@ const Analytics = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={`min-h-screen ${currentTheme.colors.secondary}`}>
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className={`${currentTheme.colors.primary} shadow-sm border-b ${currentTheme.colors.border}`}>
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className={`text-3xl font-bold ${currentTheme.colors.textPrimary}`}>
                 Analytics
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
+              <p className={`${currentTheme.colors.textMuted} mt-2`}>
                 Comprehensive insights and performance metrics
               </p>
             </div>
             
             {/* Quick Actions */}
             <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
-              <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              <button className={`inline-flex items-center px-4 py-2 text-white rounded-md transition-colors ${currentTheme.colors.button}`}>
                 <DocumentTextIcon className="h-4 w-4 mr-2" />
                 Export Report
               </button>
-              <button className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+              <button className={`inline-flex items-center px-4 py-2 text-white rounded-md transition-colors ${currentTheme.colors.buttonSecondary}`}>
                 <CogIcon className="h-4 w-4 mr-2" />
                 Settings
               </button>
@@ -152,7 +154,7 @@ const Analytics = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className={`${currentTheme.colors.primary} border-b ${currentTheme.colors.border}`}>
         <div className="max-w-7xl mx-auto px-4">
           <nav className="flex space-x-8 overflow-x-auto">
             {filteredTabs.map((tab) => {
@@ -163,8 +165,8 @@ const Analytics = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                      ? `border-blue-500 ${currentTheme.colors.info}`
+                      : `border-transparent ${currentTheme.colors.textMuted} ${currentTheme.colors.linkHover}`
                   }`}
                 >
                   <Icon className="h-5 w-5 mr-2" />
@@ -186,23 +188,23 @@ const Analytics = () => {
                 <Link
                   key={tab.id}
                   to={`/analytics/${tab.id}`}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow group"
+                  className={`${currentTheme.colors.surface} rounded-lg shadow-sm border ${currentTheme.colors.border} p-6 ${currentTheme.colors.surfaceHover} transition-shadow group`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <Icon className="h-8 w-8 text-blue-600 group-hover:text-blue-700" />
+                        <Icon className={`h-8 w-8 ${currentTheme.colors.info} group-hover:text-blue-700`} />
                       </div>
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600">
+                        <h3 className={`text-lg font-semibold ${currentTheme.colors.textPrimary} group-hover:text-blue-600`}>
                           {tab.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className={`text-sm ${currentTheme.colors.textMuted} mt-1`}>
                           {tab.description}
                         </p>
                       </div>
                     </div>
-                    <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                    <ArrowRightIcon className={`h-5 w-5 ${currentTheme.colors.textMuted} group-hover:text-blue-600 transition-colors`} />
                   </div>
                 </Link>
               );
@@ -217,14 +219,14 @@ const Analytics = () => {
       </main>
 
       {/* Footer */}
-      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+      <div className={`${currentTheme.colors.primary} border-t ${currentTheme.colors.border} mt-12`}>
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center">
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className={`text-sm ${currentTheme.colors.textMuted}`}>
               <p>Analytics data is updated in real-time</p>
               <p className="mt-1">Last updated: {new Date().toLocaleString()}</p>
             </div>
-            <div className="mt-4 sm:mt-0 flex space-x-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className={`mt-4 sm:mt-0 flex space-x-4 text-sm ${currentTheme.colors.textMuted}`}>
               <button className="hover:text-blue-600 transition-colors">Help</button>
               <button className="hover:text-blue-600 transition-colors">Documentation</button>
               <button className="hover:text-blue-600 transition-colors">Support</button>

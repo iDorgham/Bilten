@@ -55,6 +55,8 @@ const News = () => {
       const response = await articlesAPI.getAll(params);
       const { articles: articlesData, pagination: paginationData } = response.data.data;
       
+
+      
       setArticles(articlesData);
       setPagination(paginationData);
       setError('');
@@ -270,12 +272,28 @@ const News = () => {
                 {/* Article Image */}
                 <div className="relative aspect-[16/9] bg-gray-100 dark:bg-gray-800 overflow-hidden">
                   <img
-                    src={article.featured_image_url || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop'}
+                    src={article.featured_image_url || article.image_url || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop'}
                     alt={article.title}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop';
+                      console.log('Image failed to load:', e.target.src);
+                      // Replace placeholder URLs with working Unsplash images
+                      if (e.target.src.includes('via.placeholder.com')) {
+                        const fallbackImages = [
+                          'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=400&h=300&fit=crop',
+                          'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=300&fit=crop'
+                        ];
+                        const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+                        e.target.src = fallbackImages[randomIndex];
+                      } else {
+                        e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop';
+                      }
+                      e.target.onerror = null; // Prevent infinite loop
                     }}
+                    onLoad={() => console.log('Image loaded successfully:', article.title)}
+                    loading="lazy"
                   />
                   {/* Image overlay for better text readability */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
@@ -331,7 +349,7 @@ const News = () => {
                     {/* Views */}
                     <div className="flex items-center">
                       <EyeIcon className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
-                      <span>{article.view_count} {t('news.views')}</span>
+                      <span>{article.view_count || article.views || 0} {t('news.views')}</span>
                     </div>
                   </div>
 

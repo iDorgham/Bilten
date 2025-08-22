@@ -41,8 +41,12 @@ import {
   AdminFinancial,
   AdminConfig,
   AdminSecurity,
-  AdminTeam
+  AdminTeam,
+  AdminEvents,
+  AdminRealtime,
+  AdminPromo
 } from '../pages/admin';
+import AdminLayout from '../components/admin/AdminLayout';
 
 // Create protected route components
 const ProtectedUserRoutes = () => (
@@ -77,14 +81,61 @@ const ProtectedOrganizerRoutes = () => (
 const ProtectedAdminRoutes = () => (
   <Routes>
     {/* Admin routes - require admin role */}
-    <Route path="/admin/dashboard" element={<AdminDashboard />} />
-    <Route path="/admin/users" element={<AdminUsers />} />
-    <Route path="/admin/moderation" element={<AdminModeration />} />
-    <Route path="/admin/analytics" element={<AdminAnalytics />} />
-    <Route path="/admin/financial" element={<AdminFinancial />} />
-    <Route path="/admin/config" element={<AdminConfig />} />
-    <Route path="/admin/security" element={<AdminSecurity />} />
-    <Route path="/admin/team" element={<AdminTeam />} />
+    <Route path="/dashboard" element={
+      <AdminLayout title="Dashboard">
+        <AdminDashboard />
+      </AdminLayout>
+    } />
+    <Route path="/users" element={
+      <AdminLayout title="User Management">
+        <AdminUsers />
+      </AdminLayout>
+    } />
+    <Route path="/events" element={
+      <AdminLayout title="Event Management">
+        <AdminEvents />
+      </AdminLayout>
+    } />
+    <Route path="/moderation" element={
+      <AdminLayout title="Content Moderation">
+        <AdminModeration />
+      </AdminLayout>
+    } />
+    <Route path="/analytics" element={
+      <AdminLayout title="Analytics">
+        <AdminAnalytics />
+      </AdminLayout>
+    } />
+    <Route path="/realtime" element={
+      <AdminLayout title="Real-time Analytics">
+        <AdminRealtime />
+      </AdminLayout>
+    } />
+    <Route path="/financial" element={
+      <AdminLayout title="Financial Reports">
+        <AdminFinancial />
+      </AdminLayout>
+    } />
+    <Route path="/promo-codes" element={
+      <AdminLayout title="Promo Code Management">
+        <AdminPromo />
+      </AdminLayout>
+    } />
+    <Route path="/config" element={
+      <AdminLayout title="System Configuration">
+        <AdminConfig />
+      </AdminLayout>
+    } />
+    <Route path="/security" element={
+      <AdminLayout title="Security & Compliance">
+        <AdminSecurity />
+      </AdminLayout>
+    } />
+    <Route path="/team" element={
+      <AdminLayout title="Team Management">
+        <AdminTeam />
+      </AdminLayout>
+    } />
   </Routes>
 );
 

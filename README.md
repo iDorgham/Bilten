@@ -5,6 +5,8 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com/)
+[![CI](https://github.com/your-username/bilten-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/bilten-platform/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/your-username/bilten-platform/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/bilten-platform)
 
 A comprehensive event management and ticketing platform that enables organizers to create, manage, and promote events while providing attendees with a seamless ticket purchasing and event discovery experience.
 
@@ -135,14 +137,54 @@ cd bilten-scanner && npm run dev
 
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up -d   # Preferred (Compose V2)
+# or
+docker-compose up -d   # Legacy (Compose V1)
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop services
-docker-compose down
+docker compose down
 ```
+
+### GHCR Images
+
+Once CI builds succeed on main, you can pull images from GitHub Container Registry (set repo to use GHCR):
+
+```bash
+# Login (if needed)
+echo $GITHUB_TOKEN | docker login ghcr.io -u <github-username> --password-stdin
+
+# Pull latest images
+docker pull ghcr.io/<owner>/<repo>/backend:latest
+docker pull ghcr.io/<owner>/<repo>/frontend:latest
+docker pull ghcr.io/<owner>/<repo>/scanner:latest
+
+# Run containers
+docker run -p 3001:3001 ghcr.io/<owner>/<repo>/backend:latest
+docker run -p 3000:3000 ghcr.io/<owner>/<repo>/frontend:latest
+docker run -p 3002:3002 ghcr.io/<owner>/<repo>/scanner:latest
+```
+
+### Windows (WSL2) + Docker Desktop
+
+If you use Ubuntu on WSL2 with Docker Desktop:
+
+1. In Docker Desktop → Settings → Resources → WSL Integration, enable integration for your Ubuntu distro.
+2. Ensure Ubuntu is WSL2:
+   ```powershell
+   wsl.exe -l -v
+   wsl.exe --set-version Ubuntu 2
+   ```
+3. From your Ubuntu shell, run Docker commands directly:
+   ```bash
+   docker version
+   docker run hello-world
+   cd /mnt/d/Work/AI/Projects/Bilten && docker compose up -d
+   ```
+
+Performance tip: For large bind mounts or many file changes, clone and run inside the Linux filesystem (e.g., `~/work/Bilten`) instead of `/mnt/c` or `/mnt/d`.
 
 ## 📁 Project Structure
 
@@ -316,6 +358,57 @@ docker build -t bilten-backend .
 docker build -t bilten-frontend ./bilten-frontend
 docker build -t bilten-scanner ./bilten-scanner
 ```
+
+#### Using GHCR images with docker-compose.prod.yml
+
+Set these environment variables (see `deploy.env.prod.example`), then run compose:
+
+```bash
+export GHCR_OWNER=ghcr.io/<owner>
+export GHCR_REPO=<repo>
+export TAG=latest                  # or a release tag like v1.2.3
+
+# Backend env
+export DATABASE_URL=postgresql://user:pass@db-host:5432/bilten
+export REDIS_URL=redis://redis-host:6379
+export JWT_SECRET=your_jwt_secret
+export CORS_ORIGIN=https://your-frontend.example.com
+
+# Frontend/Scanner API base
+export REACT_APP_API_URL=https://api.example.com/api/v1
+export VITE_API_URL=https://api.example.com/api/v1
+
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Security Headers (Frontend)
+
+When serving the React build behind a reverse proxy (e.g., Nginx), set strict security headers:
+
+```nginx
+server {
+    listen 80;
+    server_name your-frontend.example.com;
+
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.bilten.com https://stripe.com https://js.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; report-uri https://api.bilten.com/api/v1/security/csp-report" always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options DENY always;
+    add_header Referrer-Policy no-referrer-when-downgrade always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+
+    root /usr/share/nginx/html; # point to your build output
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+```
+
+Notes:
+- Update `connect-src` to match your API origin (e.g., `https://api.bilten.com`).
+- The meta CSP in `bilten-frontend/public/index.html` provides a baseline; the reverse proxy header takes precedence in production.
+- CSP violations are reported to `/api/v1/security/csp-report` endpoint (implement logging/monitoring).
 
 ## 🤝 Contributing
 

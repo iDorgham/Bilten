@@ -1,76 +1,95 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAdminTheme } from '../../context/AdminThemeContext';
+import {
+  Squares2X2Icon,
+  CalendarIcon,
+  UsersIcon,
+  CurrencyDollarIcon,
+  GiftIcon,
+  CogIcon,
+  ChartBarIcon,
+  EyeIcon,
+  ClockIcon,
+  DocumentTextIcon,
+  ShieldCheckIcon,
+  UserGroupIcon,
+  BanknotesIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon
+} from '@heroicons/react/24/outline';
 
-const AdminSidebar = ({ isOpen, onToggle }) => {
+const AdminSidebar = ({ isOpen, onToggle, isCollapsed = false, onCollapseToggle }) => {
   const location = useLocation();
   const [expandedSection, setExpandedSection] = useState('dashboard');
+  const { currentTheme, isDark } = useAdminTheme();
 
   const menuItems = [
     {
       section: 'dashboard',
       title: 'Dashboard',
-      icon: '📊',
+      icon: Squares2X2Icon,
       path: '/admin/dashboard',
       items: [
-        { title: 'Overview', path: '/admin/dashboard' },
-        { title: 'Analytics', path: '/admin/analytics' },
-        { title: 'Real-time', path: '/admin/realtime' }
+        { title: 'Overview', path: '/admin/dashboard', icon: ChartBarIcon },
+        { title: 'Analytics', path: '/admin/analytics', icon: ChartBarIcon },
+        { title: 'Real-time', path: '/admin/realtime', icon: EyeIcon }
       ]
     },
     {
       section: 'events',
       title: 'Events',
-      icon: '🎫',
+      icon: CalendarIcon,
       path: '/admin/events',
       items: [
-        { title: 'All Events', path: '/admin/events' },
-        { title: 'Create Event', path: '/admin/events/create' },
-        { title: 'Event Reviews', path: '/admin/events/reviews' }
+        { title: 'All Events', path: '/admin/events', icon: CalendarIcon },
+        { title: 'Create Event', path: '/admin/events/create', icon: CogIcon },
+        { title: 'Event Reviews', path: '/admin/events/reviews', icon: DocumentTextIcon }
       ]
     },
     {
       section: 'users',
       title: 'Users',
-      icon: '👥',
+      icon: UsersIcon,
       path: '/admin/users',
       items: [
-        { title: 'All Users', path: '/admin/users' },
-        { title: 'User Management', path: '/admin/users/manage' },
-        { title: 'Permissions', path: '/admin/users/permissions' }
+        { title: 'All Users', path: '/admin/users', icon: UsersIcon },
+        { title: 'User Management', path: '/admin/users/manage', icon: UserGroupIcon },
+        { title: 'Permissions', path: '/admin/users/permissions', icon: ShieldCheckIcon }
       ]
     },
     {
       section: 'financial',
       title: 'Financial',
-      icon: '💰',
+      icon: CurrencyDollarIcon,
       path: '/admin/financial',
       items: [
-        { title: 'Revenue', path: '/admin/financial/revenue' },
-        { title: 'Orders', path: '/admin/financial/orders' },
-        { title: 'Refunds', path: '/admin/financial/refunds' }
+        { title: 'Revenue', path: '/admin/financial/revenue', icon: BanknotesIcon },
+        { title: 'Orders', path: '/admin/financial/orders', icon: DocumentTextIcon },
+        { title: 'Refunds', path: '/admin/financial/refunds', icon: CurrencyDollarIcon }
       ]
     },
     {
       section: 'promo',
       title: 'Promo Codes',
-      icon: '🎁',
+      icon: GiftIcon,
       path: '/admin/promo-codes',
       items: [
-        { title: 'All Codes', path: '/admin/promo-codes' },
-        { title: 'Create Code', path: '/admin/promo-codes/create' },
-        { title: 'Analytics', path: '/admin/promo-codes/analytics' }
+        { title: 'All Codes', path: '/admin/promo-codes', icon: GiftIcon },
+        { title: 'Create Code', path: '/admin/promo-codes/create', icon: CogIcon },
+        { title: 'Analytics', path: '/admin/promo-codes/analytics', icon: ChartBarIcon }
       ]
     },
     {
       section: 'system',
       title: 'System',
-      icon: '⚙️',
+      icon: CogIcon,
       path: '/admin/system',
       items: [
-        { title: 'Configuration', path: '/admin/config' },
-        { title: 'Security', path: '/admin/security' },
-        { title: 'Moderation', path: '/admin/moderation' },
-        { title: 'Team', path: '/admin/team' }
+        { title: 'Configuration', path: '/admin/config', icon: CogIcon },
+        { title: 'Security', path: '/admin/security', icon: ShieldCheckIcon },
+        { title: 'Moderation', path: '/admin/moderation', icon: EyeIcon },
+        { title: 'Team', path: '/admin/team', icon: UserGroupIcon }
       ]
     }
   ];
@@ -95,65 +114,67 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-64 bg-rgb(37 99 235)/90 backdrop-blur-md
-        border-r border-white/10 z-50 transform transition-transform duration-300
-        lg:translate-x-0 lg:static lg:z-auto
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        min-h-screen ${isCollapsed ? 'w-16' : 'w-64'} ${currentTheme.colors.sidebarBg} backdrop-blur-md
+        border-r ${currentTheme.colors.border} relative flex flex-col transition-all duration-300
+        ${isOpen ? 'block' : 'hidden lg:flex'}
       `}>
         {/* Header */}
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
-              <span className="text-white text-xl">👑</span>
+        <div className={`${isCollapsed ? 'p-4' : 'p-6'} border-b ${currentTheme.colors.border}`}>
+          {!isCollapsed && (
+            <div className="text-center">
+              <h1 className={`${currentTheme.colors.textPrimary} font-bold text-2xl`}>Bilten</h1>
+              <p className={`${currentTheme.colors.textMuted} text-sm`}>Admin Panel</p>
             </div>
-            <div>
-              <h1 className="text-white font-bold text-lg">Admin Panel</h1>
-              <p className="text-white/60 text-xs">Bilten Management</p>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
           {menuItems.map((section) => (
             <div key={section.section} className="space-y-1">
               <button
-                onClick={() => toggleSection(section.section)}
+                onClick={() => isCollapsed ? null : toggleSection(section.section)}
                 className={`
-                  w-full flex items-center justify-between p-3 rounded-lg
+                  w-full flex items-center ${isCollapsed ? 'justify-center p-2' : 'justify-between p-3'} rounded-lg
                   transition-all duration-200 text-left
-                  ${expandedSection === section.section 
-                    ? 'bg-white/10 border border-white/20' 
-                    : 'hover:bg-white/5'
+                  ${expandedSection === section.section && !isCollapsed
+                    ? `${currentTheme.colors.glass} border ${currentTheme.colors.borderLight}` 
+                    : currentTheme.colors.glassHover
                   }
                 `}
+                title={isCollapsed ? section.title : ''}
               >
-                <div className="flex items-center space-x-3">
-                  <span className="text-white text-lg">{section.icon}</span>
-                  <span className="text-white font-medium">{section.title}</span>
+                <div className={`flex items-center ${isCollapsed ? '' : 'space-x-3'}`}>
+                  <section.icon className={`w-5 h-5 ${currentTheme.colors.textPrimary}`} />
+                  {!isCollapsed && (
+                    <span className={`${currentTheme.colors.textPrimary} font-medium`}>{section.title}</span>
+                  )}
                 </div>
-                <span className={`text-white/60 transition-transform duration-200 ${
-                  expandedSection === section.section ? 'rotate-180' : ''
-                }`}>
-                  ▼
-                </span>
+                {!isCollapsed && (
+                  <span className={`${currentTheme.colors.textMuted} transition-transform duration-200 ${
+                    expandedSection === section.section ? 'rotate-180' : ''
+                  }`}>
+                    ▼
+                  </span>
+                )}
               </button>
 
-              {expandedSection === section.section && (
+              {expandedSection === section.section && !isCollapsed && (
                 <div className="ml-8 space-y-1">
                   {section.items.map((item) => (
                     <Link
                       key={item.path}
                       to={item.path}
                       className={`
-                        block p-2 rounded-lg text-sm transition-all duration-200
+                        flex items-center space-x-2 p-2 rounded-lg text-sm transition-all duration-200
                         ${isActive(item.path)
-                          ? 'bg-white/15 text-white border border-white/20'
-                          : 'text-white/70 hover:text-white hover:bg-white/5'
+                          ? `${currentTheme.colors.sidebarActive} border ${currentTheme.colors.borderAccent}`
+                          : currentTheme.colors.sidebarItem
                         }
                       `}
                     >
-                      {item.title}
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
                     </Link>
                   ))}
                 </div>
@@ -163,14 +184,39 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
         </nav>
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-              <span className="text-white text-sm">👤</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-white text-sm font-medium">Admin User</p>
-              <p className="text-white/60 text-xs">admin@bilten.com</p>
+        <div className="mt-auto">
+          {/* Collapse Button */}
+          <div className={`p-4 border-t ${currentTheme.colors.border}`}>
+            <button
+              onClick={onCollapseToggle}
+              className={`w-full p-2 rounded-lg ${currentTheme.colors.glass} border ${currentTheme.colors.borderLight} ${currentTheme.colors.textMuted} ${currentTheme.colors.glassHover} transition-colors flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}
+              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {!isCollapsed && (
+                <span className={`${currentTheme.colors.textSecondary} text-sm font-medium`}>
+                  {isCollapsed ? 'Expand' : 'Collapse Menu'}
+                </span>
+              )}
+              {isCollapsed ? (
+                <ChevronDoubleRightIcon className="w-4 h-4" />
+              ) : (
+                <ChevronDoubleLeftIcon className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          
+          {/* Admin User */}
+          <div className={`p-4 border-t ${currentTheme.colors.border}`}>
+            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
+              <div className={`w-8 h-8 rounded-full ${currentTheme.colors.glass} border ${currentTheme.colors.borderLight} flex items-center justify-center`}>
+                <span className={`${currentTheme.colors.textPrimary} text-sm`}>👤</span>
+              </div>
+              {!isCollapsed && (
+                <div className="flex-1">
+                  <p className={`${currentTheme.colors.textPrimary} text-sm font-medium`}>Admin User</p>
+                  <p className={`${currentTheme.colors.textMuted} text-xs`}>admin@bilten.com</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -6,3 +6,6 @@ export { default as AdminConfig } from './AdminConfig';
 export { default as AdminSecurity } from './AdminSecurity';
 export { default as AdminTeam } from './AdminTeam';
 export { default as AdminModeration } from './AdminModeration';
+export { default as AdminEvents } from './AdminEvents';
+export { default as AdminRealtime } from './AdminRealtime';
+export { default as AdminPromo } from './AdminPromo';

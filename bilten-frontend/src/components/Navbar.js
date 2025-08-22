@@ -237,17 +237,15 @@ const Navbar = () => {
 
     switch (user?.role) {
       case 'admin':
+        // Admin users get the same menu as regular users (no admin features in main navbar)
+        // Admin features are accessible through the dedicated admin interface
         return [
-          { label: t('menu.dashboard'), icon: Squares2X2Icon, action: () => navigate('/admin/dashboard') },
-          { label: t('menu.userManagement'), icon: UsersIcon, action: () => navigate('/admin/users') },
-          { label: t('menu.contentModeration'), icon: ClipboardDocumentListIcon, action: () => navigate('/admin/moderation') },
-          { label: t('menu.platformAnalytics'), icon: ChartBarIcon, action: () => navigate('/admin/analytics') },
-          { label: t('menu.realTimeAnalytics'), icon: ChartBarIcon, action: () => navigate('/analytics/realtime') },
-          { label: t('menu.dataExport'), icon: DocumentArrowDownIcon, action: () => navigate('/export') },
-          { label: t('menu.financialReports'), icon: BanknotesIcon, action: () => navigate('/admin/financial') },
-          { label: t('menu.systemConfiguration'), icon: WrenchScrewdriverIcon, action: () => navigate('/admin/config') },
-          { label: t('menu.securityCompliance'), icon: LockClosedIcon, action: () => navigate('/admin/security') },
-          { label: t('menu.teamManagement'), icon: UserGroupIcon, action: () => navigate('/admin/team') },
+          { label: t('menu.myTickets'), icon: TicketIcon, action: () => navigate('/my-tickets') },
+          { label: t('menu.orderHistory'), icon: ClockIcon, action: () => navigate('/orders') },
+          { label: t('menu.favoriteEvents'), icon: HeartIcon, action: () => navigate('/favorites') },
+          { label: t('menu.paymentMethods'), icon: CreditCardIcon, action: () => navigate('/payment-methods') },
+          { type: 'divider' },
+          { label: 'Admin Panel', icon: ShieldCheckIcon, action: () => navigate('/admin/dashboard'), highlight: true },
           ...commonItems,
         ];
 
@@ -704,10 +702,18 @@ const Navbar = () => {
                             <button
                               key={index}
                               onClick={item.action}
-                              className="flex items-center gap-2.5 w-full text-left px-3 py-1.5 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors"
+                              className={`flex items-center gap-2.5 w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                                item.highlight 
+                                  ? 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-medium' 
+                                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                              }`}
                               role="menuitem"
                             >
-                              {item.icon && <item.icon className="w-4 h-4 text-gray-400 dark:text-gray-500" />}
+                              {item.icon && <item.icon className={`w-4 h-4 ${
+                                item.highlight 
+                                  ? 'text-blue-600 dark:text-blue-400' 
+                                  : 'text-gray-400 dark:text-gray-500'
+                              }`} />}
                               <span>{item.label}</span>
                             </button>
                           );

@@ -1,0 +1,146 @@
+/* Light mode styles */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  transition: all 0.3s ease;
+}
+
+.app-header {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header-left {
+  text-align: left;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.app-header h1 {
+  color: #2563eb;
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  font-weight: 800;
+}
+
+.app-header p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.validation-result {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.validation-result.valid {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.validation-result.invalid {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Dark mode styles */
+.dark.app {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.dark .app-header {
+  background: rgba(17, 24, 39, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark .app-header h1 {
+  color: #60a5fa;
+}
+
+.dark .app-header p {
+  color: #d1d5db;
+}
+
+.dark .validation-result.valid {
+  background-color: #064e3b;
+  color: #6ee7b7;
+  border: 1px solid #065f46;
+}
+
+.dark .validation-result.invalid {
+  background-color: #450a0a;
+  color: #fca5a5;
+  border: 1px solid #7f1d1d;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .header-left {
+    text-align: center;
+  }
+  
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .app-header p {
+    font-size: 0.75rem;
+  }
+  
+  .app-main {
+    padding: 1rem;
+  }
+  
+  .validation-result {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-main {
+    padding: 1.5rem;
+  }
+}

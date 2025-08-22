@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { eventsAPI } from '../../services/api';
 import { generateEventSlug } from '../../utils/slugUtils';
 import {
   CalendarIcon,
@@ -26,162 +27,57 @@ const Events = () => {
   const eventsPerPage = 6;
 
   useEffect(() => {
-    // Simulated events data - replace with actual API call
-    const mockEvents = [
-      {
-        id: "550e8400-e29b-41d4-a716-446655440101",
-        title: 'Artbat - Deep Techno Journey',
-        description: 'Experience the hypnotic deep techno sounds of Artbat in an immersive night of electronic music at Cairo\'s premier venue.',
-        date: '2025-03-15',
-        time: '21:00',
-        location: 'Cairo Opera House',
-        price: 1500,
-        category: 'deep-techno',
-        image: 'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440102",
-        title: 'Amr Diab - The Plateau Concert',
-        description: 'The legendary Amr Diab returns with his greatest hits and new songs in an exclusive concert at the iconic venue.',
-        date: '2025-02-20',
-        time: '20:00',
-        location: 'New Administrative Capital Arena',
-        price: 800,
-        category: 'concert',
-        image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440103",
-        title: 'Anyma - Melodic Techno Experience',
-        description: 'Join Anyma for a spiritual journey through melodic techno rhythms and organic sounds that will move your soul.',
-        date: '2025-02-28',
-        time: '22:00',
-        location: 'Sahel Beach Club',
-        price: 1000,
-        category: 'melodic-techno',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440104",
-        title: 'Masar Egbari - Alternative Rock Night',
-        description: 'Experience the unique sound of Masar Egbari as they blend traditional Egyptian music with modern alternative rock.',
-        date: '2025-03-10',
-        time: '19:30',
-        location: 'El Sawy Culturewheel',
-        price: 600,
-        category: 'concert',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440105",
-        title: 'Organic House Festival',
-        description: 'A full day of organic house music featuring local and international DJs in a beautiful outdoor setting.',
-        date: '2025-04-05',
-        time: '14:00',
-        location: 'Al-Azhar Park',
-        price: 1200,
-        category: 'organic-house',
-        image: 'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440106",
-        title: 'Progressive Techno Underground',
-        description: 'An underground progressive techno experience featuring cutting-edge electronic music in an intimate venue.',
-        date: '2025-03-22',
-        time: '23:00',
-        location: 'Underground Cairo',
-        price: 800,
-        category: 'progressive-techno',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440107",
-        title: 'Deep House Sunset Session',
-        description: 'Relax to the smooth sounds of deep house as the sun sets over the Nile with premium cocktails and great vibes.',
-        date: '2025-03-08',
-        time: '18:00',
-        location: 'Nile Rooftop Lounge',
-        price: 900,
-        category: 'deep-techno',
-        image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440108",
-        title: 'Melodic Techno Beach Party',
-        description: 'A beachside melodic techno party with international DJs, stunning ocean views, and an unforgettable atmosphere.',
-        date: '2025-04-12',
-        time: '16:00',
-        location: 'Marina Beach Club',
-        price: 1500,
-        category: 'melodic-techno',
-        image: 'https://images.unsplash.com/photo-1571266028243-d220c9c3b2d2?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440109",
-        title: 'Electronic Music Festival',
-        description: 'A three-day electronic music festival featuring the best local and international DJs.',
-        date: '2025-05-15',
-        time: '14:00',
-        location: 'Giza Pyramids',
-        price: 2000,
-        category: 'deep-techno',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440110",
-        title: 'Jazz Night at the Opera',
-        description: 'An elegant evening of jazz music in the historic Cairo Opera House.',
-        date: '2025-03-25',
-        time: '20:00',
-        location: 'Cairo Opera House',
-        price: 1200,
-        category: 'concert',
-        image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440111",
-        title: 'Rock Concert Under the Stars',
-        description: 'A rock concert featuring local bands under the beautiful Egyptian sky.',
-        date: '2025-04-20',
-        time: '19:00',
-        location: 'Al-Azhar Park',
-        price: 800,
-        category: 'concert',
-        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop'
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440112",
-        title: 'Classical Music Evening',
-        description: 'A classical music performance by the Cairo Symphony Orchestra.',
-        date: '2025-05-10',
-        time: '19:30',
-        location: 'Cairo Opera House',
-        price: 1500,
-        category: 'concert',
-        image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=600&fit=crop'
-      }
-    ];
+    fetchEvents();
+  }, [currentPage, selectedCategory]);
 
-    setTimeout(() => {
-      setEvents(mockEvents);
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        page: currentPage,
+        limit: eventsPerPage,
+        category: selectedCategory !== 'all' ? selectedCategory : undefined
+      };
+
+      // Remove undefined params
+      Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+
+      const response = await eventsAPI.getAll(params);
+      const { events: eventsData } = response.data.data;
+      
+      // Transform the data to match the frontend expectations
+      const transformedEvents = eventsData.map(event => ({
+        ...event,
+        // Map backend fields to frontend expectations
+        date: new Date(event.start_date).toLocaleDateString(),
+        time: new Date(event.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        location: event.venue_name,
+        price: event.base_price,
+        image: event.cover_image_url // Map cover_image_url to image field
+      }));
+      
+      setEvents(transformedEvents);
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+      // Fallback to empty array if API fails
+      setEvents([]);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  };
 
+  // Filter events based on search term (client-side filtering for now)
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
     const matchesDate = !selectedDate || event.date === selectedDate;
     
-    return matchesSearch && matchesCategory && matchesDate;
+    return matchesSearch && matchesDate;
   });
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-  const startIndex = (currentPage - 1) * eventsPerPage;
-  const endIndex = startIndex + eventsPerPage;
-  const currentEvents = filteredEvents.slice(startIndex, endIndex);
+  // For now, use the filtered events directly since API handles pagination
+  const currentEvents = filteredEvents;
+  const totalPages = 1; // API handles pagination
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -319,7 +215,9 @@ const Events = () => {
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
                           e.target.src = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop';
+                          e.target.onerror = null; // Prevent infinite loop
                         }}
+                        loading="lazy"
                       />
                       <div className="absolute top-2 right-2">
                         <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">

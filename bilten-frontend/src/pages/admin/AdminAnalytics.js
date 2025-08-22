@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAdminTheme } from '../../context/AdminThemeContext';
+import AdminPageWrapper from '../../components/admin/AdminPageWrapper';
+import StatCard from '../../components/admin/StatCard';
 import {
   ChartBarIcon,
   UsersIcon,
   TicketIcon,
   CurrencyDollarIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
   CalendarIcon,
-  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 const AdminAnalytics = () => {
   const { t } = useLanguage();
-  const [analytics, setAnalytics] = useState({
-    overview: {},
-    trends: [],
-    topEvents: [],
-    userGrowth: [],
-    revenueData: []
-  });
+  const { currentTheme } = useAdminTheme();
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30d');
 
@@ -29,16 +24,24 @@ const AdminAnalytics = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(`/api/v1/admin/analytics?period=${timeRange}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAnalytics(data);
-      }
+      setLoading(true);
+      // Mock data for now
+      const mockData = {
+        overview: {
+          totalUsers: 1247,
+          totalEvents: 89,
+          totalRevenue: 125000,
+          activeEvents: 23,
+        },
+        topEvents: [
+          { id: 1, title: 'Summer Music Festival', organizer: 'Music Events Co.', revenue: 45000, tickets_sold: 1250 },
+          { id: 2, title: 'Tech Conference 2024', organizer: 'Tech Solutions Inc.', revenue: 35600, tickets_sold: 890 },
+          { id: 3, title: 'Art Exhibition', organizer: 'Creative Arts', revenue: 19500, tickets_sold: 650 },
+          { id: 4, title: 'Food Festival', organizer: 'Culinary Events', revenue: 12600, tickets_sold: 420 },
+          { id: 5, title: 'Sports Championship', organizer: 'Sports Events Ltd.', revenue: 8900, tickets_sold: 320 },
+        ],
+      };
+      setAnalytics(mockData);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     } finally {
@@ -46,174 +49,99 @@ const AdminAnalytics = () => {
     }
   };
 
-  const StatCard = ({ title, value, change, icon: Icon, color }) => (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
-          {change && (
-            <div className="flex items-center mt-2">
-              {change > 0 ? (
-                <ArrowTrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
-              ) : (
-                                  <ArrowTrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
-              )}
-              <span className={`text-sm ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {Math.abs(change)}% from last period
-              </span>
-            </div>
-          )}
-        </div>
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className="h-6 w-6 text-white" />
-        </div>
-      </div>
-    </div>
-  );
-
-  if (loading) {
+  if (loading || !analytics) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-              ))}
-            </div>
+      <AdminPageWrapper>
+        <div className="animate-pulse">
+          <div className="h-8 bg-white/10 rounded-xl w-1/4 mb-8"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-white/10 rounded-xl"></div>)}
           </div>
         </div>
-      </div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Platform Analytics
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Comprehensive insights into platform performance and user behavior.
-          </p>
-        </div>
-
-        {/* Time Range Selector */}
-        <div className="mb-6">
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Time Range:</span>
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-            </div>
+    <AdminPageWrapper>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className={`text-3xl font-bold ${currentTheme.colors.textPrimary}`}>Platform Analytics</h1>
+            <p className={`${currentTheme.colors.textMuted} mt-1`}>Comprehensive insights into platform performance.</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              className={`${currentTheme.colors.input} rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+            >
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="90d">Last 90 days</option>
+              <option value="1y">Last year</option>
+            </select>
+            <button
+              onClick={fetchAnalytics}
+              className={`${currentTheme.colors.button} text-white px-4 py-2 rounded-xl text-sm transition-colors`}
+            >
+              Refresh
+            </button>
           </div>
         </div>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Total Users"
-            value={analytics.overview?.totalUsers?.toLocaleString() || '0'}
-            change={12}
-            icon={UsersIcon}
-            color="bg-blue-500"
-          />
-          <StatCard
-            title="Total Events"
-            value={analytics.overview?.totalEvents?.toLocaleString() || '0'}
-            change={8}
-            icon={TicketIcon}
-            color="bg-green-500"
-          />
-          <StatCard
-            title="Total Revenue"
-            value={`$${analytics.overview?.totalRevenue?.toLocaleString() || '0'}`}
-            change={15}
-            icon={CurrencyDollarIcon}
-            color="bg-purple-500"
-          />
-          <StatCard
-            title="Active Events"
-            value={analytics.overview?.activeEvents?.toLocaleString() || '0'}
-            change={-3}
-            icon={CalendarIcon}
-            color="bg-orange-500"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard title="Total Users" value={analytics.overview.totalUsers.toLocaleString()} change={12} icon={UsersIcon} color="text-purple-500" bgColor="bg-purple-500/10" />
+          <StatCard title="Total Events" value={analytics.overview.totalEvents.toLocaleString()} change={8} icon={TicketIcon} color="text-green-500" bgColor="bg-green-500/10" />
+          <StatCard title="Total Revenue" value={`$${analytics.overview.totalRevenue.toLocaleString()}`} change={15} icon={CurrencyDollarIcon} color="text-yellow-500" bgColor="bg-yellow-500/10" />
+          <StatCard title="Active Events" value={analytics.overview.activeEvents.toLocaleString()} change={-3} icon={CalendarIcon} color="text-blue-500" bgColor="bg-blue-500/10" />
         </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* User Growth Chart */}
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Growth</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className={`${currentTheme.colors.surface} backdrop-blur-sm border ${currentTheme.colors.border} rounded-xl p-6`}>
+            <h3 className={`text-xl font-bold ${currentTheme.colors.textPrimary} mb-6`}>User Growth</h3>
             <div className="h-64 flex items-center justify-center">
               <div className="text-center">
-                <ChartBarIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400">Chart coming soon</p>
+                <ChartBarIcon className={`h-12 w-12 ${currentTheme.colors.textMuted} mx-auto mb-4`} />
+                <p className={`${currentTheme.colors.textMuted}`}>Chart coming soon</p>
               </div>
             </div>
           </div>
-
-          {/* Revenue Chart */}
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue Trends</h3>
+          <div className={`${currentTheme.colors.surface} backdrop-blur-sm border ${currentTheme.colors.border} rounded-xl p-6`}>
+            <h3 className={`text-xl font-bold ${currentTheme.colors.textPrimary} mb-6`}>Revenue Trends</h3>
             <div className="h-64 flex items-center justify-center">
               <div className="text-center">
-                <ChartBarIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400">Chart coming soon</p>
+                <ChartBarIcon className={`h-12 w-12 ${currentTheme.colors.textMuted} mx-auto mb-4`} />
+                <p className={`${currentTheme.colors.textMuted}`}>Chart coming soon</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Top Events */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Top Performing Events</h3>
-          </div>
-          <div className="p-6">
-            {analytics.topEvents && analytics.topEvents.length > 0 ? (
-              <div className="space-y-4">
-                {analytics.topEvents.slice(0, 5).map((event, index) => (
-                  <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{index + 1}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">{event.title}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.organizer}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900 dark:text-white">${event.revenue?.toLocaleString()}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{event.tickets_sold} tickets</p>
-                    </div>
+        <div className={`${currentTheme.colors.surface} backdrop-blur-sm border ${currentTheme.colors.border} rounded-xl p-6`}>
+          <h2 className={`text-xl font-bold ${currentTheme.colors.textPrimary} mb-6`}>Top Performing Events</h2>
+          <div className="space-y-4">
+            {analytics.topEvents.map((event, index) => (
+              <div key={event.id} className={`flex items-center justify-between p-4 ${currentTheme.colors.surfaceHover} rounded-xl transition-colors`}>
+                <div className="flex items-center space-x-4">
+                  <div className={`w-8 h-8 ${currentTheme.colors.glass} rounded-full flex items-center justify-center`}>
+                    <span className={`text-sm font-medium ${currentTheme.colors.textPrimary}`}>{index + 1}</span>
                   </div>
-                ))}
+                  <div>
+                    <p className={`font-medium ${currentTheme.colors.textPrimary}`}>{event.title}</p>
+                    <p className={`text-sm ${currentTheme.colors.textMuted}`}>{event.organizer}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`font-medium ${currentTheme.colors.textPrimary}`}>${event.revenue.toLocaleString()}</p>
+                  <p className={`text-sm ${currentTheme.colors.textMuted}`}>{event.tickets_sold} tickets</p>
+                </div>
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <TicketIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400">No event data available</p>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 };
 

@@ -405,12 +405,16 @@ const EventSearch = () => {
                         src={event.featured_image_url}
                         alt={event.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                        loading="lazy"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-primary-600">
-                        <CalendarIcon className="h-12 w-12 text-white" />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-primary-600 ${event.featured_image_url ? 'hidden' : ''}`}>
+                      <CalendarIcon className="h-12 w-12 text-white" />
+                    </div>
                     <div className="absolute top-3 left-3">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(event.category)}`}>
                         {event.category}

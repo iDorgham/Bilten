@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { API_CONFIG } from '../config/api';
 
 const ApiStatusIndicator = () => {
   const [status, setStatus] = useState('checking');
@@ -16,7 +17,9 @@ const ApiStatusIndicator = () => {
 
   const checkApiStatus = async () => {
     try {
-      const response = await fetch('http://localhost:3001/health');
+      // Use the API configuration instead of hardcoded URL
+      const healthUrl = API_CONFIG.BASE_URL.replace('/api/v1', '/health');
+      const response = await fetch(healthUrl);
       if (response.ok) {
         const data = await response.json();
         setStatus('connected');

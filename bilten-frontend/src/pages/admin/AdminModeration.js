@@ -1,97 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAdminTheme } from '../../context/AdminThemeContext';
+import AdminPageWrapper from '../../components/admin/AdminPageWrapper';
+import StatCard from '../../components/admin/StatCard';
 import {
-  ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
-  EyeIcon,
   ClockIcon,
   DocumentTextIcon,
-  PhotoIcon,
   FlagIcon
 } from '@heroicons/react/24/outline';
 
 const AdminModeration = () => {
   const { t } = useLanguage();
-  const [pendingItems, setPendingItems] = useState([]);
+  const { currentTheme } = useAdminTheme();
+  const [moderationData, setModerationData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('events');
-  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    fetchPendingItems();
-  }, [activeTab]);
+    fetchModerationData();
+  }, []);
 
-  const fetchPendingItems = async () => {
+  const fetchModerationData = async () => {
     try {
-      const response = await fetch(`/api/v1/admin/moderation/${activeTab}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setPendingItems(data.items || []);
-      }
+      setLoading(true);
+      // Mock data
+      const mockData = {
+        pendingReviews: 0,
+        approvedToday: 0,
+        rejectedToday: 0,
+        flaggedContent: 0,
+      };
+      setModerationData(mockData);
     } catch (error) {
-      console.error('Error fetching pending items:', error);
+      console.error('Error fetching moderation data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleModerationAction = async (itemId, action) => {
-    try {
-      const response = await fetch(`/api/v1/admin/moderation/${activeTab}/${itemId}/${action}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        fetchPendingItems();
-        setSelectedItem(null);
-      }
-    } catch (error) {
-      console.error(`Error ${action} item:`, error);
-    }
-  };
-
-  if (loading) {
+  if (loading || !moderationData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>
-            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+      <AdminPageWrapper>
+        <div className="animate-pulse">
+          <div className={`h-8 rounded-xl w-1/4 mb-8 ${currentTheme.colors.surface}`}></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => <div key={i} className={`h-32 rounded-xl ${currentTheme.colors.surface}`}></div>)}
           </div>
         </div>
-      </div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminPageWrapper>
+      <div className="space-y-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Content Moderation
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Review and approve pending content across the platform.
-          </p>
+          <h1 className={`text-3xl font-bold ${currentTheme.colors.textPrimary} mb-2`}>Content Moderation</h1>
+          <p className={`${currentTheme.colors.textMuted}`}>Review and approve pending content.</p>
         </div>
         
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-          <p className="text-center text-gray-600 dark:text-gray-400">
-            Content moderation interface coming soon...
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <StatCard title="Pending Reviews" value={moderationData.pendingReviews} icon={ClockIcon} color="text-yellow-500" bgColor="bg-yellow-500/10" />
+          <StatCard title="Approved Today" value={moderationData.approvedToday} icon={CheckCircleIcon} color="text-green-500" bgColor="bg-green-500/10" />
+          <StatCard title="Rejected Today" value={moderationData.rejectedToday} icon={XCircleIcon} color="text-red-500" bgColor="bg-red-500/10" />
+          <StatCard title="Flagged Content" value={moderationData.flaggedContent} icon={FlagIcon} color="text-purple-500" bgColor="bg-purple-500/10" />
+        </div>
+
+        <div className={`${currentTheme.colors.surface} backdrop-blur-sm rounded-xl border ${currentTheme.colors.border}`}>
+          <div className="p-6">
+            <div className="text-center py-12">
+              <DocumentTextIcon className={`h-16 w-16 ${currentTheme.colors.textMuted} mx-auto mb-4`} />
+              <h3 className={`text-lg font-medium ${currentTheme.colors.textPrimary} mb-2`}>No Content to Review</h3>
+              <p className={`${currentTheme.colors.textMuted}`}>The moderation queue is empty.</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 };
 

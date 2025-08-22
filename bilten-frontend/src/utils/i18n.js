@@ -67,8 +67,10 @@ const validateTranslationStructure = (translations, languageCode) => {
  */
 export const detectUserLanguage = () => {
   // Check browser language preferences
-  const browserLanguages = navigator.languages || [navigator.language];
-  
+  const browserLanguages = (Array.isArray(navigator.languages) && navigator.languages.length > 0)
+    ? navigator.languages
+    : [navigator.language].filter(Boolean);
+
   for (const browserLang of browserLanguages) {
     const langCode = browserLang.split('-')[0].toLowerCase();
     const availableLanguage = AVAILABLE_LANGUAGES.find(lang => lang.code === langCode);
@@ -229,8 +231,18 @@ const interpolateParams = (text, params) => {
  * @param {Object} options - Intl.NumberFormat options
  * @returns {string} The formatted number
  */
+// Basic BCP-47-like validator for locales we intend to support in tests/runtime
+const isSupportedLocale = (locale) => {
+  if (typeof locale !== 'string') return false;
+  // Accept patterns like 'en', 'fr', 'ar', 'en-US', 'ar-EG'
+  return /^[a-z]{2}(-[A-Z]{2})?$/.test(locale);
+};
+
 export const formatNumber = (number, locale = 'en-US', options = {}) => {
   try {
+    if (!isSupportedLocale(locale)) {
+      return number.toString();
+    }
     return new Intl.NumberFormat(locale, options).format(number);
   } catch (error) {
     console.error(`Failed to format number for locale ${locale}:`, error);
@@ -248,6 +260,9 @@ export const formatNumber = (number, locale = 'en-US', options = {}) => {
 export const formatDate = (date, locale = 'en-US', options = {}) => {
   try {
     const dateObj = date instanceof Date ? date : new Date(date);
+    if (!isSupportedLocale(locale)) {
+      return dateObj.toString();
+    }
     return new Intl.DateTimeFormat(locale, options).format(dateObj);
   } catch (error) {
     console.error(`Failed to format date for locale ${locale}:`, error);
@@ -264,6 +279,9 @@ export const formatDate = (date, locale = 'en-US', options = {}) => {
  */
 export const formatCurrency = (amount, locale = 'en-US', currency = 'USD') => {
   try {
+    if (!isSupportedLocale(locale)) {
+      return `${currency} ${amount}`;
+    }
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency

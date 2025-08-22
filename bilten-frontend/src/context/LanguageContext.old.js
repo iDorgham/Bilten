@@ -24,7 +24,7 @@ export const LanguageProvider = ({ children }) => {
     return saved || 'en';
   });
   
-  const [translations, setTranslations] = useState({});
+  const [translationsState, setTranslationsState] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

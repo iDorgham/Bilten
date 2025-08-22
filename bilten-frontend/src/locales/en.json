@@ -575,7 +575,13 @@
       "north-coast": "North Coast",
       "el-gouna": "El Gouna",
       "cairo": "Cairo",
-      "general": "General"
+      "general": "General",
+      "platform": "Platform Updates",
+      "tips": "Event Tips",
+      "technology": "Technology",
+      "business": "Business",
+      "community": "Community",
+      "sustainability": "Sustainability"
     },
     "error": {
       "loadFailed": "Failed to load articles:",

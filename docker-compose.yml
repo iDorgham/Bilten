@@ -111,7 +111,7 @@ services:
       dockerfile: Dockerfile
     container_name: bilten-frontend
     environment:
-      REACT_APP_API_URL: http://localhost:3001/api/v1
+      REACT_APP_API_BASE_URL: http://localhost:3001/api/v1
       REACT_APP_USE_MOCK_API: false
     ports:
       - "3000:3000"

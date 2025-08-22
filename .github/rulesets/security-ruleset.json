@@ -1,0 +1,150 @@
+{
+  "name": "Bilten Security Ruleset",
+  "description": "Security rules for the Bilten event management platform",
+  "enforcement": "active",
+  "target": "branch",
+  "rules": [
+    {
+      "type": "secret_scanning",
+      "state": "enabled"
+    },
+    {
+      "type": "secret_scanning_push_protection",
+      "state": "enabled"
+    },
+    {
+      "type": "dependency_review",
+      "state": "enabled"
+    },
+    {
+      "type": "code_scanning",
+      "state": "enabled",
+      "tools": [
+        {
+          "type": "default",
+          "setup": {
+            "query_suite": "default"
+          }
+        }
+      ]
+    },
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/security-scan.yml"
+          },
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/dependency-check.yml"
+          }
+        ]
+      }
+    },
+    {
+      "type": "required_deployments",
+      "parameters": {
+        "required_environments": ["staging", "production"]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_status_checks": [
+          {
+            "context": "Security Scan",
+            "integration_id": 123456
+          },
+          {
+            "context": "Dependency Review",
+            "integration_id": 123456
+          },
+          {
+            "context": "CodeQL",
+            "integration_id": 123456
+          }
+        ],
+        "strict_required_status_checks_policy": true
+      }
+    },
+    {
+      "type": "required_pull_request_reviews",
+      "parameters": {
+        "required_approving_review_count": 2,
+        "require_code_owner_reviews": true,
+        "require_last_push_approval": true,
+        "dismiss_stale_reviews_on_push": true,
+        "required_review_thread_resolution": true
+      }
+    },
+    {
+      "type": "required_signatures",
+      "parameters": {
+        "required_signatures": true
+      }
+    },
+    {
+      "type": "required_linear_history",
+      "parameters": {
+        "required_linear_history": true
+      }
+    },
+    {
+      "type": "required_conversation_resolution",
+      "parameters": {
+        "required_conversation_resolution": true
+      }
+    },
+    {
+      "type": "required_commits",
+      "parameters": {
+        "required_commits": [
+          {
+            "oid": "abc123",
+            "message": "Initial security setup"
+          }
+        ]
+      }
+    },
+    {
+      "type": "required_workflows",
+      "parameters": {
+        "required_workflows": [
+          {
+            "repository": "iDorgham/Bilten",
+            "path": ".github/workflows/security-audit.yml"
+          }
+        ]
+      }
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 123456,
+      "actor_type": "Integration",
+      "bypass_mode": "always"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/main",
+        "refs/heads/master",
+        "refs/heads/develop",
+        "refs/heads/release/*"
+      ],
+      "exclude": [
+        "refs/heads/feature/*",
+        "refs/heads/hotfix/*"
+      ]
+    },
+    "repository_name": {
+      "include": [
+        "Bilten"
+      ]
+    }
+  }
+}
+

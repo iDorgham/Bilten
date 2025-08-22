@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ${GHCR_OWNER}/${GHCR_REPO}/backend:${TAG:-latest}
+    container_name: bilten-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  frontend:
+    image: ${GHCR_OWNER}/${GHCR_REPO}/frontend:${TAG:-latest}
+    container_name: bilten-frontend
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:3001/api/v1}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  scanner:
+    image: ${GHCR_OWNER}/${GHCR_REPO}/scanner:${TAG:-latest}
+    container_name: bilten-scanner
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001/api/v1}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+
