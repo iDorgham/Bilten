@@ -1,0 +1,66 @@
+{
+  "name": "bilten-platform",
+  "version": "1.0.0",
+  "description": "Bilten Event Management Platform - Complete Solution",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:gateway\"",
+    "dev:backend": "cd apps/bilten-backend && npm run dev",
+    "dev:frontend": "cd apps/bilten-frontend && npm start",
+    "dev:gateway": "cd apps/bilten-gateway && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend && npm run build:gateway",
+    "build:backend": "cd apps/bilten-backend && npm run build",
+    "build:frontend": "cd apps/bilten-frontend && npm run build",
+    "build:gateway": "cd apps/bilten-gateway && npm run build",
+    "test": "npm run test:backend && npm run test:frontend && npm run test:gateway",
+    "test:backend": "cd apps/bilten-backend && npm run test",
+    "test:frontend": "cd apps/bilten-frontend && npm run test",
+    "test:gateway": "cd apps/bilten-gateway && npm run test",
+    "test:e2e": "node tools/mcp-workflows/automated-testing.js",
+    "test:payment": "node tools/mcp-workflows/payment-testing.js",
+    "test:performance": "node tools/mcp-workflows/performance-testing.js",
+    "deploy": "npm run test && npm run build && docker-compose up -d",
+    "deploy:prod": "npm run test:e2e && npm run build && docker-compose -f docker-compose.prod.yml up -d",
+    "monitor": "node tools/mcp-workflows/monitoring.js",
+    "health": "node tools/mcp-workflows/health-check.js",
+    "db:migrate": "cd apps/bilten-backend && npm run migrate",
+    "db:status": "cd apps/bilten-backend && npm run migrate:status",
+    "redis:health": "cd apps/bilten-backend && npm run redis:health",
+    "clickhouse:health": "cd apps/bilten-backend && npm run clickhouse:health",
+    "analytics:start": "cd apps/bilten-backend && npm run analytics:start",
+    "setup": "npm install && npm run db:migrate && npm run redis:init",
+    "setup:payment": "node scripts/setup-payment-integration.js",
+    "clean": "docker-compose down -v && rm -rf node_modules apps/*/node_modules",
+    "logs": "docker-compose logs -f",
+    "logs:backend": "docker-compose logs -f backend",
+    "logs:frontend": "docker-compose logs -f frontend",
+    "logs:gateway": "docker-compose logs -f gateway"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bilten/bilten-platform.git"
+  },
+  "keywords": [
+    "events",
+    "tickets",
+    "management",
+    "platform",
+    "react",
+    "nodejs",
+    "postgresql",
+    "redis",
+    "clickhouse"
+  ],
+  "author": "Bilten Team",
+  "license": "MIT"
+}

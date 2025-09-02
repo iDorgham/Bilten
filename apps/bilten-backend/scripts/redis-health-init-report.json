@@ -1,0 +1,217 @@
+{
+  "timestamp": "2025-08-23T14:24:30.518Z",
+  "overall": "warning",
+  "instances": {
+    "session": {
+      "type": "session",
+      "status": "warning",
+      "checks": {
+        "connection": {
+          "status": "healthy",
+          "responseTime": 60,
+          "message": "Connection successful (60ms)"
+        },
+        "performance": {
+          "status": "warning",
+          "metrics": {
+            "hitRatio": 0.8840304100424173,
+            "opsPerSecond": 528,
+            "slowQueries": 11,
+            "avgResponseTime": 30.028376138239608
+          },
+          "issues": [
+            "Low hit ratio: 88.4%",
+            "High slow query count: 11"
+          ],
+          "message": "Performance issues: Low hit ratio: 88.4%, High slow query count: 11"
+        },
+        "memory": {
+          "status": "warning",
+          "metrics": {
+            "usedMemory": 266007436.4999899,
+            "maxMemory": 536870912,
+            "usageRatio": 0.495477461256068,
+            "fragmentationRatio": 1.345918841681374,
+            "evictedKeys": 9
+          },
+          "issues": [
+            "Keys being evicted: 9"
+          ],
+          "message": "Memory issues: Keys being evicted: 9"
+        },
+        "configuration": {
+          "status": "warning",
+          "issues": [
+            "Suboptimal memory policy: allkeys-lru\r"
+          ],
+          "message": "Configuration issues: 1"
+        }
+      },
+      "metrics": {
+        "uptime": 19970,
+        "connectedClients": 10,
+        "usedMemory": 339738624,
+        "totalCommands": 31173,
+        "keyspaceHits": 8670,
+        "keyspaceMisses": 702,
+        "evictedKeys": 4,
+        "expiredKeys": 31
+      },
+      "alerts": [
+        {
+          "level": "info",
+          "message": "Keys being evicted: 4"
+        }
+      ]
+    },
+    "cache": {
+      "type": "cache",
+      "status": "warning",
+      "checks": {
+        "connection": {
+          "status": "healthy",
+          "responseTime": 46,
+          "message": "Connection successful (46ms)"
+        },
+        "performance": {
+          "status": "healthy",
+          "metrics": {
+            "hitRatio": 0.9781471052569292,
+            "opsPerSecond": 218,
+            "slowQueries": 3,
+            "avgResponseTime": 32.43737065207672
+          },
+          "issues": [],
+          "message": "Performance is good"
+        },
+        "memory": {
+          "status": "warning",
+          "metrics": {
+            "usedMemory": 703972680.2889926,
+            "maxMemory": 1073741824,
+            "usageRatio": 0.6556256490657038,
+            "fragmentationRatio": 1.3731747868358926,
+            "evictedKeys": 9
+          },
+          "issues": [
+            "Keys being evicted: 9"
+          ],
+          "message": "Memory issues: Keys being evicted: 9"
+        },
+        "configuration": {
+          "status": "warning",
+          "issues": [
+            "Suboptimal memory policy: allkeys-lru\r"
+          ],
+          "message": "Configuration issues: 1"
+        }
+      },
+      "metrics": {
+        "uptime": 21540,
+        "connectedClients": 42,
+        "usedMemory": 18874368,
+        "totalCommands": 92237,
+        "keyspaceHits": 3318,
+        "keyspaceMisses": 508,
+        "evictedKeys": 9,
+        "expiredKeys": 2
+      },
+      "alerts": [
+        {
+          "level": "warning",
+          "message": "Low hit ratio: 86.7%"
+        },
+        {
+          "level": "info",
+          "message": "Keys being evicted: 9"
+        }
+      ]
+    },
+    "realtime": {
+      "type": "realtime",
+      "status": "warning",
+      "checks": {
+        "connection": {
+          "status": "healthy",
+          "responseTime": 62,
+          "message": "Connection successful (62ms)"
+        },
+        "performance": {
+          "status": "healthy",
+          "metrics": {
+            "hitRatio": 0.9023568719884093,
+            "opsPerSecond": 513,
+            "slowQueries": 9,
+            "avgResponseTime": 33.9009962436237
+          },
+          "issues": [],
+          "message": "Performance is good"
+        },
+        "memory": {
+          "status": "warning",
+          "metrics": {
+            "usedMemory": 178446492.3760047,
+            "maxMemory": 268435456,
+            "usageRatio": 0.6647649868428882,
+            "fragmentationRatio": 1.1398271701927607,
+            "evictedKeys": 6
+          },
+          "issues": [
+            "Keys being evicted: 6"
+          ],
+          "message": "Memory issues: Keys being evicted: 6"
+        },
+        "configuration": {
+          "status": "warning",
+          "issues": [
+            "Suboptimal memory policy: volatile-ttl\r"
+          ],
+          "message": "Configuration issues: 1"
+        }
+      },
+      "metrics": {
+        "uptime": 66924,
+        "connectedClients": 43,
+        "usedMemory": 400556032,
+        "totalCommands": 41893,
+        "keyspaceHits": 5266,
+        "keyspaceMisses": 294,
+        "evictedKeys": 8,
+        "expiredKeys": 56
+      },
+      "alerts": [
+        {
+          "level": "info",
+          "message": "Keys being evicted: 8"
+        }
+      ]
+    }
+  },
+  "alerts": [
+    {
+      "level": "info",
+      "message": "Keys being evicted: 4"
+    },
+    {
+      "level": "warning",
+      "message": "Low hit ratio: 86.7%"
+    },
+    {
+      "level": "info",
+      "message": "Keys being evicted: 9"
+    },
+    {
+      "level": "info",
+      "message": "Keys being evicted: 8"
+    }
+  ],
+  "summary": {
+    "totalInstances": 3,
+    "healthyInstances": 0,
+    "warningInstances": 3,
+    "criticalInstances": 0,
+    "totalAlerts": 4,
+    "criticalAlerts": 0,
+    "warningAlerts": 1
+  }
+}

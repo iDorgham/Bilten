@@ -1,0 +1,23 @@
+{
+  "environment": "development",
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "eventchain_dev",
+    "ssl": false
+  },
+  "api": {
+    "baseUrl": "http://localhost:3001",
+    "timeout": 30000
+  },
+  "logging": {
+    "level": "debug",
+    "enableConsole": true,
+    "enableFile": true
+  },
+  "features": {
+    "enableDebugMode": true,
+    "enableMockData": true,
+    "enableTestingTools": true
+  }
+}

@@ -1,0 +1,496 @@
+version: '3.8'
+
+# =============================================================================
+# BILTEN EVENT MANAGEMENT PLATFORM - PRODUCTION DOCKER COMPOSE
+# =============================================================================
+# 
+# Production configuration with optimized settings for:
+# - High availability and scalability
+# - Security hardening
+# - Performance optimization
+# - Resource management
+# - Monitoring and alerting
+#
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+# =============================================================================
+
+services:
+  # =============================================================================
+  # CORE APPLICATIONS - PRODUCTION
+  # =============================================================================
+
+  # Bilten Backend API Service - Production
+  bilten-backend:
+    build:
+      context: ../../apps/bilten-backend
+      dockerfile: Dockerfile.prod
+    container_name: bilten-backend-prod
+    environment:
+      # Application Configuration
+      NODE_ENV: production
+      PORT: 3001
+      
+      # Database Connections
+      DATABASE_URL: postgresql://bilten_user:${POSTGRES_PASSWORD}@postgres:5432/bilten_primary
+      DATABASE_REPLICA_URL: postgresql://bilten_user:${POSTGRES_PASSWORD}@postgres-replica:5432/bilten_primary
+      
+      # Redis Connections
+      REDIS_SESSION_URL: redis://redis-session:6379
+      REDIS_CACHE_URL: redis://redis-cache:6379
+      REDIS_REALTIME_URL: redis://redis-realtime:6379
+      
+      # Analytics and Search
+      CLICKHOUSE_URL: http://clickhouse:8123
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      
+      # Security
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      
+      # Monitoring
+      ENABLE_METRICS: true
+      METRICS_PORT: 3001
+      
+      # File Storage
+      UPLOAD_PATH: /app/uploads
+      MAX_FILE_SIZE: 10485760
+      
+      # Email Configuration
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      
+      # Payment Processing
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      
+      # Logging
+      LOG_LEVEL: info
+      LOG_FORMAT: json
+    ports:
+      - "3001:3001"
+    volumes:
+      - bilten_backend_uploads:/app/uploads
+      - bilten_backend_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-session:
+        condition: service_started
+      redis-cache:
+        condition: service_started
+      clickhouse:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+      - bilten_monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  # Bilten Frontend Application - Production
+  bilten-frontend:
+    build:
+      context: ../../apps/bilten-frontend
+      dockerfile: Dockerfile.prod
+    container_name: bilten-frontend-prod
+    environment:
+      # API Configuration
+      REACT_APP_API_BASE_URL: ${API_BASE_URL}
+      REACT_APP_GATEWAY_URL: ${GATEWAY_URL}
+      REACT_APP_USE_MOCK_API: false
+      
+      # Application Configuration
+      REACT_APP_ENVIRONMENT: production
+      REACT_APP_VERSION: ${APP_VERSION}
+      
+      # Feature Flags
+      REACT_APP_ENABLE_PAYMENTS: true
+      REACT_APP_ENABLE_ANALYTICS: true
+      REACT_APP_ENABLE_NOTIFICATIONS: true
+      
+      # External Services
+      REACT_APP_STRIPE_PUBLIC_KEY: ${STRIPE_PUBLIC_KEY}
+      REACT_APP_GOOGLE_ANALYTICS_ID: ${GOOGLE_ANALYTICS_ID}
+    ports:
+      - "3000:3000"
+    volumes:
+      - bilten_frontend_build:/app/build
+    depends_on:
+      - bilten-backend
+      - bilten-gateway
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Bilten API Gateway - Production
+  bilten-gateway:
+    build:
+      context: ../../apps/bilten-gateway
+      dockerfile: Dockerfile.prod
+    container_name: bilten-gateway-prod
+    environment:
+      # Gateway Configuration
+      NODE_ENV: production
+      PORT: 3003
+      
+      # Service Discovery
+      BACKEND_SERVICE_URL: http://bilten-backend:3001
+      FRONTEND_SERVICE_URL: http://bilten-frontend:3000
+      SCANNER_SERVICE_URL: http://bilten-scanner:3002
+      
+      # Rate Limiting
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 1000
+      
+      # Security
+      JWT_SECRET: ${GATEWAY_JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      
+      # Monitoring
+      ENABLE_METRICS: true
+      METRICS_PORT: 3003
+      
+      # Logging
+      LOG_LEVEL: info
+      LOG_FORMAT: json
+    ports:
+      - "3003:3003"
+    volumes:
+      - bilten_gateway_logs:/app/logs
+    depends_on:
+      - bilten-backend
+      - bilten-frontend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+      - bilten_monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # =============================================================================
+  # DATABASES - PRODUCTION
+  # =============================================================================
+
+  # PostgreSQL Primary Database - Production
+  postgres:
+    image: postgres:15-alpine
+    container_name: bilten-postgres-primary-prod
+    environment:
+      POSTGRES_DB: bilten_primary
+      POSTGRES_USER: bilten_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../database/init:/docker-entrypoint-initdb.d
+      - ../../database/postgresql.prod.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bilten_user -d bilten_primary"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bilten_database
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+
+  # PostgreSQL Read Replica - Production
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: bilten-postgres-replica-prod
+    environment:
+      POSTGRES_DB: bilten_primary
+      POSTGRES_USER: bilten_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: bilten_user
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - bilten_database
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  # ClickHouse Analytics Database - Production
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: bilten-clickhouse-prod
+    environment:
+      CLICKHOUSE_DB: bilten_analytics
+      CLICKHOUSE_USER: bilten_user
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_hot:/var/lib/clickhouse/hot
+      - clickhouse_cold:/var/lib/clickhouse/cold
+      - clickhouse_archive:/var/lib/clickhouse/archive
+      - ../../database/clickhouse:/docker-entrypoint-initdb.d
+      - ../../database/clickhouse/config.prod.xml:/etc/clickhouse-server/config.xml
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - bilten_database
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+
+  # =============================================================================
+  # CACHING - PRODUCTION
+  # =============================================================================
+
+  # Redis Session Cache - Production
+  redis-session:
+    image: redis:7-alpine
+    container_name: bilten-redis-session-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_session_data:/data
+      - ../../database/redis-session.prod.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Redis Application Cache - Production
+  redis-cache:
+    image: redis:7-alpine
+    container_name: bilten-redis-cache-prod
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_cache_data:/data
+      - ../../database/redis-cache.prod.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Redis Real-time Cache - Production
+  redis-realtime:
+    image: redis:7-alpine
+    container_name: bilten-redis-realtime-prod
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_realtime_data:/data
+      - ../../database/redis-realtime.prod.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # =============================================================================
+  # SEARCH - PRODUCTION
+  # =============================================================================
+
+  # Elasticsearch for Search - Production
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: bilten-elasticsearch-prod
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - cluster.name=bilten-cluster
+      - node.name=bilten-node-1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - bilten_search
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+# =============================================================================
+# VOLUMES - PRODUCTION
+# =============================================================================
+
+volumes:
+  # Application Data
+  bilten_backend_uploads:
+    driver: local
+  bilten_backend_logs:
+    driver: local
+  bilten_frontend_build:
+    driver: local
+  bilten_gateway_logs:
+    driver: local
+  
+  # Database Data
+  postgres_data:
+    driver: local
+  postgres_replica_data:
+    driver: local
+  clickhouse_data:
+    driver: local
+  clickhouse_hot:
+    driver: local
+  clickhouse_cold:
+    driver: local
+  clickhouse_archive:
+    driver: local
+  
+  # Cache Data
+  redis_session_data:
+    driver: local
+  redis_cache_data:
+    driver: local
+  redis_realtime_data:
+    driver: local
+  
+  # Search Data
+  elasticsearch_data:
+    driver: local
+
+# =============================================================================
+# NETWORKS - PRODUCTION
+# =============================================================================
+
+networks:
+  bilten_app:
+    driver: bridge
+    name: bilten_app_network_prod
+  bilten_database:
+    driver: bridge
+    name: bilten_database_network_prod
+  bilten_cache:
+    driver: bridge
+    name: bilten_cache_network_prod
+  bilten_search:
+    driver: bridge
+    name: bilten_search_network_prod
+  bilten_monitoring:
+    driver: bridge
+    name: bilten_monitoring_network_prod
+
+

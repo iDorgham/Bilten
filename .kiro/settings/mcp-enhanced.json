@@ -1,0 +1,151 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "uvx",
+      "args": ["mcp-server-filesystem"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "read_file",
+        "list_directory",
+        "write_file",
+        "delete_file"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
+      "disabled": false,
+      "autoApprove": [
+        "playwright_screenshot",
+        "playwright_navigate",
+        "playwright_evaluate",
+        "playwright_console_logs",
+        "playwright_close"
+      ]
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "git_status",
+        "git_log",
+        "git_commit",
+        "git_push",
+        "git_pull"
+      ]
+    },
+    "docker": {
+      "command": "uvx",
+      "args": ["mcp-server-docker"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "docker_ps",
+        "docker_logs",
+        "docker_exec"
+      ]
+    },
+    "azure": {
+      "command": "uvx",
+      "args": ["mcp-server-azure"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "azure_resource_list",
+        "azure_database_query",
+        "azure_monitor_logs"
+      ]
+    },
+    "stripe": {
+      "command": "uvx",
+      "args": ["mcp-server-stripe"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "stripe_customer_create",
+        "stripe_payment_create",
+        "stripe_webhook_test"
+      ]
+    },
+    "web-search": {
+      "command": "uvx",
+      "args": ["mcp-server-web-search"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "web_search",
+        "content_extract"
+      ]
+    }
+  },
+  "workflowConfigurations": {
+    "bilten-backend": {
+      "testCommands": [
+        "npm run test",
+        "npm run migrate:status",
+        "npm run redis:health"
+      ],
+      "deployCommands": [
+        "npm run build",
+        "docker build -t bilten-backend .",
+        "docker-compose up -d backend"
+      ]
+    },
+    "bilten-frontend": {
+      "testCommands": [
+        "npm run test",
+        "npm run build"
+      ],
+      "deployCommands": [
+        "npm run build",
+        "docker build -t bilten-frontend .",
+        "docker-compose up -d frontend"
+      ]
+    },
+    "bilten-gateway": {
+      "testCommands": [
+        "npm run test",
+        "npm run lint"
+      ],
+      "deployCommands": [
+        "npm run build",
+        "docker build -t bilten-gateway .",
+        "docker-compose up -d gateway"
+      ]
+    }
+  },
+  "automationRules": {
+    "pre-commit": [
+      "npm run lint",
+      "npm run test",
+      "git add .",
+      "git commit -m 'Auto-commit: Automated changes'"
+    ],
+    "pre-deploy": [
+      "npm run test",
+      "npm run build",
+      "docker-compose down",
+      "docker-compose up -d"
+    ],
+    "post-deploy": [
+      "health-check",
+      "performance-test",
+      "notification-send"
+    ]
+  }
+}

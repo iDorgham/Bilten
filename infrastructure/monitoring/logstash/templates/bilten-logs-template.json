@@ -1,0 +1,220 @@
+{
+  "index_patterns": ["bilten-logs-*", "bilten-errors-*", "bilten-access-*"],
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "index.refresh_interval": "5s",
+    "index.codec": "best_compression",
+    "index.mapping.total_fields.limit": 2000
+  },
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "level": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
+      },
+      "service": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
+      },
+      "component": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
+      },
+      "message": {
+        "type": "text",
+        "analyzer": "standard",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "environment": {
+        "type": "keyword"
+      },
+      "version": {
+        "type": "keyword"
+      },
+      "hostname": {
+        "type": "keyword"
+      },
+      "pid": {
+        "type": "integer"
+      },
+      "requestId": {
+        "type": "keyword"
+      },
+      "sessionId": {
+        "type": "keyword"
+      },
+      "userId": {
+        "type": "keyword"
+      },
+      "deviceId": {
+        "type": "keyword"
+      },
+      "url": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 512
+          }
+        }
+      },
+      "method": {
+        "type": "keyword"
+      },
+      "statusCode": {
+        "type": "integer"
+      },
+      "duration": {
+        "type": "integer"
+      },
+      "ip": {
+        "type": "ip"
+      },
+      "userAgent": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 512
+          }
+        }
+      },
+      "user_agent": {
+        "properties": {
+          "name": {
+            "type": "keyword"
+          },
+          "version": {
+            "type": "keyword"
+          },
+          "os": {
+            "type": "keyword"
+          },
+          "os_version": {
+            "type": "keyword"
+          },
+          "device": {
+            "type": "keyword"
+          }
+        }
+      },
+      "geoip": {
+        "properties": {
+          "country_name": {
+            "type": "keyword"
+          },
+          "country_code2": {
+            "type": "keyword"
+          },
+          "city_name": {
+            "type": "keyword"
+          },
+          "location": {
+            "type": "geo_point"
+          }
+        }
+      },
+      "error": {
+        "properties": {
+          "message": {
+            "type": "text"
+          },
+          "stack": {
+            "type": "text",
+            "index": false
+          },
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "headers": {
+        "properties": {
+          "content-type": {
+            "type": "keyword"
+          },
+          "authorization": {
+            "type": "keyword",
+            "index": false
+          }
+        }
+      },
+      "platform": {
+        "type": "keyword"
+      },
+      "action": {
+        "type": "keyword"
+      },
+      "eventId": {
+        "type": "keyword"
+      },
+      "ticketId": {
+        "type": "keyword"
+      },
+      "attendeeName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "result": {
+        "type": "keyword"
+      },
+      "count": {
+        "type": "integer"
+      },
+      "metric": {
+        "type": "keyword"
+      },
+      "value": {
+        "type": "float"
+      },
+      "path": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "contentLength": {
+        "type": "integer"
+      },
+      "log_type": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      }
+    }
+  },
+  "aliases": {
+    "bilten-logs": {}
+  }
+}

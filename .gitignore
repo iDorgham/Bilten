@@ -105,10 +105,23 @@ Thumbs.db
 # Uploads
 uploads/
 public/uploads/
+apps/*/uploads/
 
 # Build outputs
 build/
 dist/
+apps/*/build/
+apps/*/dist/
+
+# Application-specific temporary files
+apps/*/logs/
+apps/*/temp/
+apps/*/tmp/
+apps/*/coverage/
+
+# Infrastructure temporary files
+infrastructure/temp/
+infrastructure/logs/
 
 # Docker
 .dockerignore

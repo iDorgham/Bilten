@@ -1,0 +1,546 @@
+# =============================================================================
+# BILTEN EVENT MANAGEMENT PLATFORM - DOCKER COMPOSE CONFIGURATION
+# =============================================================================
+# 
+# This configuration provides a complete development environment for the
+# Bilten event management platform with all necessary services.
+#
+# Services included:
+# - Core Applications: Backend API, Frontend, Gateway, Scanner
+# - Databases: PostgreSQL (Primary + Replica), ClickHouse (Analytics)
+# - Caching: Redis (Session, Cache, Real-time)
+# - Search: Elasticsearch
+# - Monitoring: Prometheus, Grafana, AlertManager
+# - Admin Tools: pgAdmin, phpMyAdmin
+#
+# Usage:
+#   Development: docker-compose up -d
+#   Production:  docker-compose -f docker-compose.prod.yml up -d
+#   Monitoring:  docker-compose -f docker-compose.monitoring.yml up -d
+# =============================================================================
+
+services:
+  # =============================================================================
+  # CORE APPLICATIONS
+  # =============================================================================
+
+  # Bilten Backend API Service
+  bilten-backend:
+    build:
+      context: ../../apps/bilten-backend
+      dockerfile: Dockerfile
+    container_name: bilten-backend
+    environment:
+      # Application Configuration
+      NODE_ENV: development
+      PORT: 3001
+      
+      # Database Connections
+      DATABASE_URL: postgresql://bilten_user:bilten_password@postgres:5432/bilten_primary
+      DATABASE_REPLICA_URL: postgresql://bilten_user:bilten_password@postgres-replica:5432/bilten_primary
+      
+      # Redis Connections
+      REDIS_SESSION_URL: redis://redis-session:6379
+      REDIS_CACHE_URL: redis://redis-cache:6379
+      REDIS_REALTIME_URL: redis://redis-realtime:6379
+      
+      # Analytics and Search
+      CLICKHOUSE_URL: http://clickhouse:8123
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      
+      # Security
+      JWT_SECRET: bilten_jwt_secret_development_2025
+      JWT_REFRESH_SECRET: bilten_refresh_secret_development_2025
+      CORS_ORIGIN: http://localhost:3000,http://localhost:3002
+      
+      # Monitoring
+      ENABLE_METRICS: true
+      METRICS_PORT: 3001
+      
+      # File Storage
+      UPLOAD_PATH: /app/uploads
+      MAX_FILE_SIZE: 10485760
+      
+      # Email Configuration
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_USER: bilten
+      SMTP_PASS: bilten_password
+      
+      # Payment Processing (Development)
+      STRIPE_SECRET_KEY: sk_test_development_key
+      STRIPE_WEBHOOK_SECRET: whsec_development_secret
+      
+      # Logging
+      LOG_LEVEL: debug
+      LOG_FORMAT: json
+    ports:
+      - "3001:3001"
+    volumes:
+      - bilten_backend_uploads:/app/uploads
+      - bilten_backend_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-session:
+        condition: service_started
+      redis-cache:
+        condition: service_started
+      clickhouse:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+      - bilten_monitoring
+
+  # Bilten Frontend Application
+  bilten-frontend:
+    build:
+      context: ../../apps/bilten-frontend
+      dockerfile: Dockerfile
+    container_name: bilten-frontend
+    environment:
+      # API Configuration
+      REACT_APP_API_BASE_URL: http://localhost:3001/api/v1
+      REACT_APP_GATEWAY_URL: http://localhost:3003
+      REACT_APP_USE_MOCK_API: false
+      
+      # Application Configuration
+      REACT_APP_ENVIRONMENT: development
+      REACT_APP_VERSION: 1.0.0
+      
+      # Feature Flags
+      REACT_APP_ENABLE_PAYMENTS: true
+      REACT_APP_ENABLE_ANALYTICS: true
+      REACT_APP_ENABLE_NOTIFICATIONS: true
+      
+      # External Services
+      REACT_APP_STRIPE_PUBLIC_KEY: pk_test_development_key
+      REACT_APP_GOOGLE_ANALYTICS_ID: GA_DEVELOPMENT_ID
+    ports:
+      - "3000:3000"
+    volumes:
+      - bilten_frontend_build:/app/build
+    depends_on:
+      - bilten-backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+
+  # Bilten API Gateway
+  bilten-gateway:
+    build:
+      context: ../../apps/bilten-gateway
+      dockerfile: Dockerfile
+    container_name: bilten-gateway
+    environment:
+      # Gateway Configuration
+      NODE_ENV: development
+      PORT: 3003
+      
+      # Service Discovery
+      BACKEND_SERVICE_URL: http://bilten-backend:3001
+      FRONTEND_SERVICE_URL: http://bilten-frontend:3000
+      SCANNER_SERVICE_URL: http://bilten-scanner:3002
+      
+      # Rate Limiting
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+      
+      # Security
+      JWT_SECRET: bilten_gateway_secret_development_2025
+      CORS_ORIGIN: http://localhost:3000,http://localhost:3002
+      
+      # Monitoring
+      ENABLE_METRICS: true
+      METRICS_PORT: 3003
+      
+      # Logging
+      LOG_LEVEL: debug
+      LOG_FORMAT: json
+    ports:
+      - "3003:3003"
+    volumes:
+      - bilten_gateway_logs:/app/logs
+    depends_on:
+      - bilten-backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+      - bilten_monitoring
+
+  # Bilten Mobile Scanner Application
+  bilten-scanner:
+    build:
+      context: ../../apps/bilten-scanner
+      dockerfile: Dockerfile
+    container_name: bilten-scanner
+    environment:
+      # API Configuration
+      VITE_API_URL: http://localhost:3001/api/v1
+      VITE_GATEWAY_URL: http://localhost:3003
+      
+      # Application Configuration
+      VITE_APP_ENVIRONMENT: development
+      VITE_APP_VERSION: 1.0.0
+      
+      # Scanner Configuration
+      VITE_ENABLE_OFFLINE_MODE: true
+      VITE_SYNC_INTERVAL: 30000
+      
+      # Security
+      VITE_ENABLE_BIOMETRIC: false
+      VITE_ENABLE_ENCRYPTION: true
+    ports:
+      - "3002:3002"
+    volumes:
+      - bilten_scanner_data:/app/data
+    depends_on:
+      - bilten-backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bilten_app
+
+  # =============================================================================
+  # DATABASES
+  # =============================================================================
+
+  # PostgreSQL Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: bilten-postgres-primary
+    environment:
+      POSTGRES_DB: bilten_primary
+      POSTGRES_USER: bilten_user
+      POSTGRES_PASSWORD: bilten_password
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../database/init:/docker-entrypoint-initdb.d
+      - ../../database/pg_hba.conf:/tmp/pg_hba.conf:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bilten_user -d bilten_primary"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bilten_database
+
+  # PostgreSQL Read Replica
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: bilten-postgres-replica
+    environment:
+      POSTGRES_DB: bilten_primary
+      POSTGRES_USER: bilten_user
+      POSTGRES_PASSWORD: bilten_password
+      PGUSER: bilten_user
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - bilten_database
+
+  # ClickHouse Analytics Database
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: bilten-clickhouse
+    environment:
+      CLICKHOUSE_DB: bilten_analytics
+      CLICKHOUSE_USER: bilten_user
+      CLICKHOUSE_PASSWORD: bilten_password
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_hot:/var/lib/clickhouse/hot
+      - clickhouse_cold:/var/lib/clickhouse/cold
+      - clickhouse_archive:/var/lib/clickhouse/archive
+      - ../../database/clickhouse:/docker-entrypoint-initdb.d
+      - ../../database/clickhouse/config.xml:/etc/clickhouse-server/config.xml
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - bilten_database
+
+  # =============================================================================
+  # CACHING & SESSION MANAGEMENT
+  # =============================================================================
+
+  # Redis Session Cache
+  redis-session:
+    image: redis:7-alpine
+    container_name: bilten-redis-session
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_session_data:/data
+      - ../../database/redis-session.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+
+  # Redis Application Cache
+  redis-cache:
+    image: redis:7-alpine
+    container_name: bilten-redis-cache
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_cache_data:/data
+      - ../../database/redis-cache.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+
+  # Redis Real-time Cache
+  redis-realtime:
+    image: redis:7-alpine
+    container_name: bilten-redis-realtime
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_realtime_data:/data
+      - ../../database/redis-realtime.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bilten_cache
+
+  # =============================================================================
+  # SEARCH & ANALYTICS
+  # =============================================================================
+
+  # Elasticsearch for Search
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: bilten-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=bilten-cluster
+      - node.name=bilten-node-1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - bilten_search
+
+  # =============================================================================
+  # DEVELOPMENT TOOLS
+  # =============================================================================
+
+  # MailHog for Email Testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: bilten-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    restart: unless-stopped
+    networks:
+      - bilten_dev
+
+  # pgAdmin for PostgreSQL Management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: bilten-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@bilten.com
+      PGADMIN_DEFAULT_PASSWORD: admin_password
+      PGADMIN_CONFIG_SERVER_MODE: False
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - bilten_dev
+
+  # =============================================================================
+  # MONITORING & OBSERVABILITY
+  # =============================================================================
+
+  # Prometheus for Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: bilten-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ../../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../../monitoring/prometheus/rules:/etc/prometheus/rules
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - bilten_monitoring
+
+  # Grafana for Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: bilten-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin_password
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3004:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ../../monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ../../monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - bilten_monitoring
+
+  # AlertManager for Alerting
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: bilten-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - alertmanager_data:/alertmanager
+      - ../../monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    networks:
+      - bilten_monitoring
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  # Application Data
+  bilten_backend_uploads:
+  bilten_backend_logs:
+  bilten_frontend_build:
+  bilten_gateway_logs:
+  bilten_scanner_data:
+  
+  # Database Data
+  postgres_data:
+  postgres_replica_data:
+  clickhouse_data:
+  clickhouse_hot:
+  clickhouse_cold:
+  clickhouse_archive:
+  
+  # Cache Data
+  redis_session_data:
+  redis_cache_data:
+  redis_realtime_data:
+  
+  # Search Data
+  elasticsearch_data:
+  
+  # Development Tools
+  pgadmin_data:
+  
+  # Monitoring Data
+  prometheus_data:
+  grafana_data:
+  alertmanager_data:
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  bilten_app:
+    driver: bridge
+    name: bilten_app_network
+  bilten_database:
+    driver: bridge
+    name: bilten_database_network
+  bilten_cache:
+    driver: bridge
+    name: bilten_cache_network
+  bilten_search:
+    driver: bridge
+    name: bilten_search_network
+  bilten_dev:
+    driver: bridge
+    name: bilten_dev_network
+  bilten_monitoring:
+    driver: bridge
+    name: bilten_monitoring_network

@@ -1,0 +1,8 @@
+{
+  "memoryUsageThreshold": 0.8,
+  "hitRatioThreshold": 0.9,
+  "connectionThreshold": 100,
+  "slowLogThreshold": 10000,
+  "alertingEnabled": true,
+  "monitoringInterval": 30000
+}

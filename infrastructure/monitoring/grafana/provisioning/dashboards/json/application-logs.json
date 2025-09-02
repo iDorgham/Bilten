@@ -1,0 +1,110 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Application Logs",
+    "tags": ["bilten", "logs", "elasticsearch"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Log Volume by Service",
+        "type": "graph",
+        "targets": [
+          {
+            "query": "bilten-logs-*",
+            "metrics": [
+              {
+                "type": "count",
+                "id": "1"
+              }
+            ],
+            "bucketAggs": [
+              {
+                "type": "date_histogram",
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m"
+                }
+              },
+              {
+                "type": "terms",
+                "field": "service.keyword",
+                "id": "3"
+              }
+            ]
+          }
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Error Logs",
+        "type": "logs",
+        "targets": [
+          {
+            "query": "bilten-logs-*",
+            "queryType": "",
+            "refId": "A",
+            "bucketAggs": [],
+            "metrics": [
+              {
+                "type": "logs",
+                "id": "1"
+              }
+            ],
+            "query": "level:ERROR OR level:FATAL"
+          }
+        ],
+        "gridPos": {"h": 12, "w": 24, "x": 0, "y": 8}
+      },
+      {
+        "id": 3,
+        "title": "Log Levels Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "query": "bilten-logs-*",
+            "metrics": [
+              {
+                "type": "count",
+                "id": "1"
+              }
+            ],
+            "bucketAggs": [
+              {
+                "type": "terms",
+                "field": "level.keyword",
+                "id": "2"
+              }
+            ]
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
+      },
+      {
+        "id": 4,
+        "title": "Recent Application Logs",
+        "type": "table",
+        "targets": [
+          {
+            "query": "bilten-logs-*",
+            "metrics": [
+              {
+                "type": "logs",
+                "id": "1"
+              }
+            ]
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

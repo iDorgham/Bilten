@@ -1,0 +1,124 @@
+{
+  "transformations": {
+    "user-service-v1-to-v2": {
+      "routePattern": "/api/users/*",
+      "request": {
+        "addHeaders": {
+          "X-Service-Version": "v2",
+          "X-Gateway-Source": "bilten-gateway"
+        },
+        "modifyPath": {
+          "stripPrefix": "/api",
+          "addPrefix": "/v2/api"
+        }
+      },
+      "response": {
+        "addHeaders": {
+          "X-API-Version": "2.0",
+          "Cache-Control": "public, max-age=300"
+        },
+        "fieldSelection": ["id", "username", "email", "profile", "createdAt", "updatedAt"]
+      }
+    },
+    "event-service-public": {
+      "routePattern": "/api/events/*",
+      "request": {
+        "addHeaders": {
+          "X-Client-Type": "web",
+          "X-Request-Source": "{{request.headers.user-agent}}"
+        }
+      },
+      "response": {
+        "removeHeaders": ["X-Internal-Service", "X-Database-Query-Time"],
+        "fieldSelection": ["id", "title", "description", "startDate", "endDate", "location", "ticketTypes", "organizer.name", "organizer.avatar"]
+      }
+    },
+    "payment-service-secure": {
+      "routePattern": "/api/payments/*",
+      "request": {
+        "addHeaders": {
+          "X-Security-Level": "high",
+          "X-Audit-Required": "true"
+        },
+        "removeHeaders": ["X-Debug-Info"]
+      },
+      "response": {
+        "removeHeaders": ["X-Internal-Transaction-Id", "X-Provider-Details"],
+        "fieldSelection": ["id", "amount", "currency", "status", "createdAt", "paymentMethod.type", "paymentMethod.last4"]
+      }
+    },
+    "analytics-service-aggregated": {
+      "routePattern": "/api/analytics/*",
+      "request": {
+        "addHeaders": {
+          "X-Analytics-Source": "gateway",
+          "X-Timestamp": "{{timestamp}}"
+        }
+      },
+      "response": {
+        "addHeaders": {
+          "X-Data-Freshness": "real-time",
+          "Cache-Control": "private, max-age=60"
+        },
+        "fieldSelection": ["metrics", "timeRange", "aggregations", "metadata.generatedAt"]
+      }
+    },
+    "file-service-cdn": {
+      "routePattern": "/api/files/*",
+      "request": {
+        "addHeaders": {
+          "X-CDN-Enabled": "true",
+          "X-Compression": "gzip"
+        }
+      },
+      "response": {
+        "addHeaders": {
+          "X-CDN-Cache": "HIT",
+          "Cache-Control": "public, max-age=86400"
+        },
+        "removeHeaders": ["X-Storage-Provider", "X-Internal-Path"]
+      }
+    },
+    "notification-service-filtered": {
+      "routePattern": "/api/notifications/*",
+      "request": {
+        "addHeaders": {
+          "X-User-ID": "{{request.headers.authorization}}",
+          "X-Channel-Filter": "web"
+        }
+      },
+      "response": {
+        "fieldSelection": ["id", "type", "title", "message", "createdAt", "read", "priority", "metadata.actionUrl"]
+      }
+    }
+  },
+  "globalTransformations": {
+    "security": {
+      "request": {
+        "removeHeaders": ["X-Internal-Token", "X-Debug-Mode", "X-Admin-Override"]
+      },
+      "response": {
+        "addHeaders": {
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "X-XSS-Protection": "1; mode=block"
+        },
+        "removeHeaders": ["Server", "X-Powered-By", "X-AspNet-Version"]
+      }
+    },
+    "monitoring": {
+      "request": {
+        "addHeaders": {
+          "X-Request-ID": "{{correlationId}}",
+          "X-Gateway-Timestamp": "{{timestamp}}"
+        }
+      },
+      "response": {
+        "addHeaders": {
+          "X-Response-Time": "{{responseTime}}",
+          "X-Gateway-Version": "1.0.0"
+        }
+      }
+    }
+  }
+}
